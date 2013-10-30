@@ -8,7 +8,11 @@ scalaVersion := "2.10.3"
 
 scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked")
 
+//------------------------------------------------------------------------------
+
 libraryDependencies += "com.twitter" %% "finagle-http" % "6.7.1"
+
+libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.26"
 
 libraryDependencies += "com.typesafe" % "config" % "1.0.2"
 

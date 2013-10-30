@@ -29,7 +29,7 @@ CREATE TABLE credentials(
 
   user_id INT NOT NULL,
 
-  username VARCHAR(1024) NOT NULL,  /* A URI, email or text username */
+  username VARCHAR(1024) NOT NULL,  /* A URI, email, or text username */
   auth_type INT NOT NULL,           /* A short integer representing the type of authorization system */
   password VARCHAR(256) NOT NULL,
   validated TINYINT NOT NULL DEFAULT 0,
