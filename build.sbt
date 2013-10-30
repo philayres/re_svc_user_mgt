@@ -16,8 +16,6 @@ libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.26"
 
 libraryDependencies += "com.typesafe" % "config" % "1.0.2"
 
-//libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.0.13"
-
 // Put config directory in classpath for easier development --------------------
 
 // For "sbt console"

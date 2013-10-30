@@ -12,6 +12,8 @@ object Routes {
   private val notFound     = new NotFound
 
   val routes = RoutingService.byMethodAndPath { case (method, path) =>
+    Config.log.debug(s"$method $path")
+
     (method, Path(path)) match {
       case Method.Post -> Root / "authenticate" =>
         authenticate
