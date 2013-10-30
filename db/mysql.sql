@@ -8,6 +8,11 @@ Note about creating index:
 http://stackoverflow.com/questions/1814532/1071-specified-key-was-too-long-max-key-length-is-767-bytes
 */
 
+/*
+username:  A URI, email, or text username
+auth_type: A short integer representing the type of authorization system
+*/
+
 /* Core tables ---------------------------------------------------------------*/
 
 CREATE TABLE admins(
@@ -15,8 +20,8 @@ CREATE TABLE admins(
   created_at TIMESTAMP NOT NULL DEFAULT 0,
   updated_at TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
 
-  username VARCHAR(1024) NOT NULL,  /* A URI, email, or text username */
-  auth_type INT NOT NULL,           /* A short integer representing the type of authorization system */
+  username VARCHAR(1024) NOT NULL,
+  auth_type INT NOT NULL,
   password VARCHAR(256) NOT NULL,
 
   PRIMARY KEY (id),
@@ -50,8 +55,8 @@ CREATE TABLE credentials(
 
   user_id INT NOT NULL,
 
-  username VARCHAR(1024) NOT NULL,  /* A URI, email, or text username */
-  auth_type INT NOT NULL,           /* A short integer representing the type of authorization system */
+  username VARCHAR(1024) NOT NULL,
+  auth_type INT NOT NULL,
   password VARCHAR(256) NOT NULL,
   validated TINYINT NOT NULL DEFAULT 0,
 
@@ -68,6 +73,6 @@ CREATE TABLE credentials(
 
 INSERT INTO clients(created_at, name) VALUES (NOW(), 'opclient1');
 
-/* Password: test123! (TODO: hash the password */
+/* Password: test123! (TODO: hash the password) */
 INSERT INTO admins(created_at, username, auth_type, password)
  VALUES (NOW(), 'opadmin', 999, 'test123!');
