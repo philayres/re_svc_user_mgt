@@ -2,6 +2,8 @@ DROP SCHEMA IF EXISTS re_svc_user_mgt;
 CREATE SCHEMA IF NOT EXISTS re_svc_user_mgt DEFAULT CHARACTER SET utf8;
 USE re_svc_user_mgt;
 
+/* Core tables ---------------------------------------------------------------*/
+
 CREATE TABLE clients(
   id INT NOT NULL AUTO_INCREMENT,
   created_at TIMESTAMP NOT NULL DEFAULT 0,
@@ -38,7 +40,11 @@ CREATE TABLE credentials(
   KEY index_user_id (user_id)
 ) ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin;
 
-/* Bootstrap data */
+/* Log tables ----------------------------------------------------------------*/
+
+/* TODO */
+
+/* Bootstrap data ------------------------------------------------------------*/
 
 INSERT INTO clients(created_at, name) VALUES (NOW(), 'opclient1');
 
