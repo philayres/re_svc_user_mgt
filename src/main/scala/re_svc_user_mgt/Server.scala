@@ -8,7 +8,7 @@ import com.twitter.finagle.http.{Http, Request, RichHttp}
 object Server extends App {
   ServerBuilder()
     .codec(RichHttp[Request](Http()))
-    .bindTo(new InetSocketAddress(Config.port))
+    .bindTo(new InetSocketAddress(Config.config.port))
     .name("re_svc_user_mgt")
     .build(Routes.routes)
 }
