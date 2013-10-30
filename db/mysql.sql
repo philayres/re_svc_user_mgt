@@ -19,29 +19,33 @@ CREATE TABLE clients(
   id INT NOT NULL AUTO_INCREMENT,
   created_at TIMESTAMP NOT NULL DEFAULT 0,
   updated_at TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP,
 
   name VARCHAR(1024) NOT NULL,
   client_type INT NOT NULL,
   shared_secret VARCHAR(255) NOT NULL,
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  KEY index_deleted_at (deleted_at)
 ) ENGINE=InnoDB;
 
 CREATE TABLE users(
   id INT NOT NULL AUTO_INCREMENT,
   created_at TIMESTAMP NOT NULL DEFAULT 0,
   updated_at TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP,
 
-  is_admin TINYINT NOT NULL DEFAULT 0,
   enabled TINYINT NOT NULL DEFAULT 0,
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  KEY index_deleted_at (deleted_at)
 ) ENGINE=InnoDB;
 
 CREATE TABLE credentials(
   id INT NOT NULL AUTO_INCREMENT,
   created_at TIMESTAMP NOT NULL DEFAULT 0,
   updated_at TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP,
 
   user_id INT NOT NULL,
 
@@ -52,7 +56,22 @@ CREATE TABLE credentials(
   validated TINYINT NOT NULL DEFAULT 0,
 
   PRIMARY KEY (id),
+  KEY index_deleted_at (deleted_at),
   KEY index_user_id (user_id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+) ENGINE=InnoDB;
+
+/*
+If the user_id of the logged in user appears in the admins table then he is
+authorized to perform the admin actions.
+*/
+CREATE TABLE admins(
+  user_id INT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP,
+
+  PRIMARY KEY (user_id),
+  KEY index_deleted_at (deleted_at),
   FOREIGN KEY (user_id) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
@@ -65,9 +84,12 @@ CREATE TABLE credentials(
 INSERT INTO clients(created_at, name, client_type, shared_secret)
  VALUES (NOW(), 'opclient1', 999, 'test123!');
 
-INSERT INTO users(created_at, is_admin, enabled)
- VALUES (NOW(), 1, 1);
+INSERT INTO users(created_at, enabled)
+ VALUES (NOW(), 1);
 
 /* Password: test123! (TODO: hash the password) */
 INSERT INTO credentials(created_at, user_id, username, auth_type, password, salt, validated)
  VALUES (NOW(), 1, 'opadmin', 999, 'test123!', 'salt', 1);
+
+INSERT INTO admins(created_at, user_id)
+ VALUES (NOW(), 1);
