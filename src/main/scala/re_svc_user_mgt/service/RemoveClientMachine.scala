@@ -13,7 +13,7 @@ import org.jboss.netty.handler.codec.http._
  *
  * Params: remove_client_name, username, auth_type, password
  */
-class RemoveClientMachine extends Service[Request, Response] {
+class RemoveClientMachine(username: String, authType: Int) extends Service[Request, Response] {
   def apply(req: Request): Future[Response] = {
     val response = Response(new DefaultHttpResponse(
       req.getProtocolVersion, HttpResponseStatus.NOT_FOUND

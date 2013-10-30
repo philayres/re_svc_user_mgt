@@ -19,6 +19,10 @@ import org.jboss.netty.handler.codec.http._
  */
 class Authenticate extends Service[Request, Response] {
   def apply(req: Request): Future[Response] = {
+    val username  = req.params.get("username").get
+    val password  = req.params.get("password").get
+    val auth_type = req.params.get("auth_type").get
+
     val response = Response(new DefaultHttpResponse(
       req.getProtocolVersion, HttpResponseStatus.OK
     ))

@@ -15,7 +15,7 @@ import org.jboss.netty.handler.codec.http._
  * If the client_name does not already exist, return successful result: HTTP OK
  * (JSON returning newly generated shared secret)
  */
-class AddClientMachine extends Service[Request, Response] {
+class AddClientMachine(username: String, authType: Int) extends Service[Request, Response] {
   def apply(req: Request): Future[Response] = {
     val response = Response(new DefaultHttpResponse(
       req.getProtocolVersion, HttpResponseStatus.NOT_FOUND

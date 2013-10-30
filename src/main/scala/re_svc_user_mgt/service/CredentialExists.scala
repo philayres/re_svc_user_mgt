@@ -7,13 +7,13 @@ import com.twitter.finagle.http.{Request, Response}
 import org.jboss.netty.handler.codec.http._
 
 /**
- * Associate a new user credentials record with an existing user profile record,
- * but only if the credentials for the existing username / password / auth_type
- * match and are validated and the new credentials do not already exist.
+ * Params: username, auth_type
  *
- * Params: username, password, auth_type, new_username, new_password, new_auth_type
+ * Found return: HTTP OK (with JSON user_id body)
+ *
+ * Not found return: HTTP not found
  */
-class AddUserCredentials extends Service[Request, Response] {
+class CredentialExists(username: String, authType: Int) extends Service[Request, Response] {
   def apply(req: Request): Future[Response] = {
     val response = Response(new DefaultHttpResponse(
       req.getProtocolVersion, HttpResponseStatus.NOT_FOUND
