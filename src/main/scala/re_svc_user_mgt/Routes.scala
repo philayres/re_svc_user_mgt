@@ -2,14 +2,13 @@ package re_svc_user_mgt
 
 import com.twitter.finagle.http.Method
 import com.twitter.finagle.http.path._
-import com.twitter.finagle.http.service.RoutingService
+import com.twitter.finagle.http.service.{NotFoundService, RoutingService}
 
 import re_svc_user_mgt.service._
 
 object Routes {
   private val authenticate = new Authenticate
   private val createUser   = new CreateUser
-  private val notFound     = new NotFound
 
   val routes = RoutingService.byMethodAndPath { case (method, path) =>
     Config.log.debug(s"$method $path")
@@ -46,7 +45,7 @@ object Routes {
         new RemoveClientMachine(username, authType)
 
       case _ =>
-        notFound
+        NotFoundService
     }
   }
 }
