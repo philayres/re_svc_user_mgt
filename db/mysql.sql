@@ -34,6 +34,7 @@ CREATE TABLE clients(
   updated_at TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
 
   name VARCHAR(1024) NOT NULL,
+  client_type INT NOT NULL,
 
   PRIMARY KEY (id)
 ) ENGINE=InnoDB;
@@ -71,7 +72,7 @@ CREATE TABLE credentials(
 
 /* Bootstrap data ------------------------------------------------------------*/
 
-INSERT INTO clients(created_at, name) VALUES (NOW(), 'opclient1');
+INSERT INTO clients(created_at, name, client_type) VALUES (NOW(), 'opclient1', 999);
 
 /* Password: test123! (TODO: hash the password) */
 INSERT INTO admins(created_at, username, auth_type, password)
