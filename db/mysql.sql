@@ -56,7 +56,8 @@ CREATE TABLE credentials(
   validated TINYINT NOT NULL DEFAULT 0,
 
   PRIMARY KEY (id),
-  KEY index_user_id (user_id)
+  KEY index_user_id (user_id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
 /* Log tables ----------------------------------------------------------------*/
