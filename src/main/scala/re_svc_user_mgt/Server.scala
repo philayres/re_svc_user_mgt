@@ -12,15 +12,3 @@ object Server extends App {
     .name("re_svc_user_mgt")
     .build(Routes.routes)
 }
-
-/*
-
-
-
-
-
-remove_client_machine (remove_client_name, username, auth_type, password)
-remove the record from the database table and return HTTP OK if the user is authenticated and matchs an 'admin user / client' record in the database
-if not found, return HTTP not found
-
-*/
