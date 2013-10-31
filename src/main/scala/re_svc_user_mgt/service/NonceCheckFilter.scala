@@ -1,10 +1,8 @@
 package re_svc_user_mgt.service
 
 import com.twitter.finagle.{Service, SimpleFilter}
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
-
-import org.jboss.netty.handler.codec.http._
 
 import re_svc_user_mgt.Config
 
@@ -19,7 +17,7 @@ class NonceCheckFilter[REQUEST <: Request] extends SimpleFilter[REQUEST, Respons
     } else {
       Config.log.warning("Nonce check failed: " + request.toString)
       val response = request.response
-      response.setStatus(HttpResponseStatus.FORBIDDEN)
+      response.status = Status.Forbidden
       response.write("Nonce check failed")
       Future.value(response)
     }
