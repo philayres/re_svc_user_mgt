@@ -10,11 +10,13 @@ scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked")
 
 //------------------------------------------------------------------------------
 
+libraryDependencies += "com.typesafe" % "config" % "1.0.2"
+
 libraryDependencies += "com.twitter" %% "finagle-http" % "6.7.4"
 
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.26"
 
-libraryDependencies += "com.typesafe" % "config" % "1.0.2"
+libraryDependencies += "com.jolbox" % "bonecp" % "0.8.0.RELEASE"
 
 // Put config directory in classpath for easier development --------------------
 

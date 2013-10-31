@@ -17,9 +17,9 @@ import com.twitter.finagle.http.{Request, Response}
  */
 class Authenticate extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
-    val username  = request.params.get("username").get
-    val password  = request.params.get("password").get
-    val auth_type = request.params.get("auth_type").get
+    val username = request.params.get("username").get
+    val authType = request.params.get("auth_type").get
+    val password = request.params.get("password").get
 
     val response = request.response
     Future.value(response)
