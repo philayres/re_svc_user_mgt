@@ -19,33 +19,28 @@ CREATE TABLE clients(
   id INT NOT NULL AUTO_INCREMENT,
   created_at TIMESTAMP NOT NULL DEFAULT 0,
   updated_at TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  deleted_at TIMESTAMP,
 
   name VARCHAR(1024) NOT NULL,
   client_type INT NOT NULL,
   shared_secret VARCHAR(255) NOT NULL,
 
-  PRIMARY KEY (id),
-  KEY index_deleted_at (deleted_at)
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE users(
   id INT NOT NULL AUTO_INCREMENT,
   created_at TIMESTAMP NOT NULL DEFAULT 0,
   updated_at TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  deleted_at TIMESTAMP,
 
   enabled TINYINT NOT NULL DEFAULT 0,
 
-  PRIMARY KEY (id),
-  KEY index_deleted_at (deleted_at)
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE credentials(
   id INT NOT NULL AUTO_INCREMENT,
   created_at TIMESTAMP NOT NULL DEFAULT 0,
   updated_at TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  deleted_at TIMESTAMP,
 
   user_id INT NOT NULL,
 
@@ -56,7 +51,6 @@ CREATE TABLE credentials(
   validated TINYINT NOT NULL DEFAULT 0,
 
   PRIMARY KEY (id),
-  KEY index_deleted_at (deleted_at),
   KEY index_user_id (user_id),
   FOREIGN KEY (user_id) REFERENCES users(id)
 ) ENGINE=InnoDB;
@@ -68,10 +62,8 @@ authorized to perform the admin actions.
 CREATE TABLE admins(
   user_id INT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  deleted_at TIMESTAMP,
 
   PRIMARY KEY (user_id),
-  KEY index_deleted_at (deleted_at),
   FOREIGN KEY (user_id) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
