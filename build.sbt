@@ -14,6 +14,8 @@ libraryDependencies += "com.typesafe" % "config" % "1.0.2"
 
 libraryDependencies += "com.twitter" %% "finagle-http" % "6.7.4"
 
+libraryDependencies += "org.json4s" %% "json4s-native" % "3.2.5"
+
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.26"
 
 libraryDependencies += "com.jolbox" % "bonecp" % "0.8.0.RELEASE"

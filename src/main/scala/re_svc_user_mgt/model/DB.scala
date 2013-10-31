@@ -1,4 +1,4 @@
-package re_svc_user_mgt
+package re_svc_user_mgt.model
 
 import java.sql.{Connection, PreparedStatement, ResultSet}
 import scala.util.control.NonFatal
@@ -7,40 +7,42 @@ import com.jolbox.bonecp.{BoneCP, BoneCPConfig}
 import re_svc_user_mgt.Config.{config, log}
 
 object DB {
-  Class.forName("com.mysql.jdbc.Driver")
-
   private val pool: BoneCP = {
+    Class.forName("com.mysql.jdbc.Driver")
     val bc = new BoneCPConfig
     bc.setJdbcUrl(config.mysqlUrl)
     new BoneCP(bc)
   }
 
-  def authenticate(username: String, authType: Int,  password: String): Boolean = {
-    var con: Connection        = null
-    var ps:  PreparedStatement = null
-    var rs:  ResultSet         = null
+  private def withConnection[T](fun: Connection => T): T = {
+    var con: Connection = null
     try {
       con = pool.getConnection()
-      ps  = con.prepareStatement("SELECT * FROM credentials WHERE username = ? AND auth_type = ? LIMIT 1")
+      fun(con)
+    } finally {
+      if (con != null) con.close()
+    }
+  }
+
+  /** @return Left(reason) or Right(userId) */
+  def authenticate(username: String, authType: Int,  password: String): Either[String, Long] = {
+    withConnection { con =>
+      val ps = con.prepareStatement("SELECT * FROM credentials WHERE username = ? AND auth_type = ? LIMIT 1")
       ps.setString(1, username)
       ps.setInt   (2, authType)
-      rs  = ps.executeQuery()
+      val rs = ps.executeQuery()
 
-      if (rs.next()) {
+      val ret = if (rs.next()) {
         val id        = rs.getString("id")
         val password  = rs.getString("password")
         true
       } else {
         false
       }
-    } catch {
-      case NonFatal(e) =>
-        log.error("authenticate", e)
-        false
-    } finally {
-      if (rs  != null) rs.close()
-      if (ps  != null) ps.close()
-      if (con != null) con.close()
+
+      rs.close()
+      ps.close()
+      Left("TODO")
     }
   }
 }
