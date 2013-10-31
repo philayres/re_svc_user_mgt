@@ -1,10 +1,10 @@
-package re_svc_user_mgt
+package re_svc_user_mgt.service
 
 import com.twitter.finagle.http.Method
 import com.twitter.finagle.http.path._
 import com.twitter.finagle.http.service.{NotFoundService, RoutingService}
 
-import re_svc_user_mgt.service._
+import re_svc_user_mgt.Config
 
 object Routes {
   private val authenticate = new Authenticate
