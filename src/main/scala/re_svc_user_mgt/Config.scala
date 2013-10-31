@@ -3,8 +3,7 @@ package re_svc_user_mgt
 import com.twitter.logging.{FileHandler, Level, Logger, LoggerFactory, Policy}
 import com.typesafe.config.ConfigFactory
 
-case class MySqlConfig(host: String, port: Int, username: String, password: String)
-case class Config(port: Int, mysql: MySqlConfig)
+case class Config(port: Int, mysqlUrl: String)
 
 object Config {
   val LOG_NODE = "re_svc_user_mgt"
@@ -33,12 +32,9 @@ object Config {
   }
 
   private def loadConfig(): Config = {
-    val config        = ConfigFactory.load("re_svc_user_mgt.conf").getConfig("re_svc_user_mgt")
-    val port          = config.getInt("port")
-    val mysqlHost     = config.getString("mysql.host")
-    val mysqlPort     = config.getInt("mysql.port")
-    val mysqlUsername = config.getString("mysql.username")
-    val mysqlPassword = config.getString("mysql.password")
-    Config(port, MySqlConfig(mysqlHost, mysqlPort, mysqlUsername, mysqlPassword))
+    val config   = ConfigFactory.load("re_svc_user_mgt.conf").getConfig("re_svc_user_mgt")
+    val port     = config.getInt("port")
+    val mysqlUrl = config.getString("mysql_url")
+    Config(port, mysqlUrl)
   }
 }
