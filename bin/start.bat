@@ -8,4 +8,4 @@ cd "%$ROOT_DIR%"
 # starting multiple processes from different directories
 set CLASS_PATH="%ROOT_DIR%\lib\*;config"
 
-java %JAVA_OPTS% -cp %CLASS_PATH% %*
+java %JAVA_OPTS% -cp %CLASS_PATH% re_svc_user_mgt.Server
