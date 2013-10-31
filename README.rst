@@ -31,7 +31,11 @@ Run in development mode
 
   sbt/sbt run
 
-Log will be output to log/re_svc_user_mgt.log.
+Log:
+
+* is output to log/re_svc_user_mgt.log
+* is rolled daily
+* level is DEBUG
 
 Release for production mode
 ---------------------------

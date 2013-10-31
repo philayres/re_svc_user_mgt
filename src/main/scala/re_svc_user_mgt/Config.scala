@@ -8,9 +8,17 @@ case class Config(port: Int, mysqlUrl: String)
 object Config {
   val LOG_NODE = "re_svc_user_mgt"
 
-  val config = loadConfig()
+  val config = loadConfigFile()
+  val log    = configLog()
 
-  val log = {
+  private def loadConfigFile(): Config = {
+    val config   = ConfigFactory.load("re_svc_user_mgt.conf").getConfig("re_svc_user_mgt")
+    val port     = config.getInt("port")
+    val mysqlUrl = config.getString("mysql_url")
+    Config(port, mysqlUrl)
+  }
+
+  private def configLog(): Logger = {
     val level       = Level.DEBUG
     val fileHandler = FileHandler(
       filename   = "log/re_svc_user_mgt.log",
@@ -29,12 +37,5 @@ object Config {
       node  = LOG_NODE,
       level = Some(level)
     )()
-  }
-
-  private def loadConfig(): Config = {
-    val config   = ConfigFactory.load("re_svc_user_mgt.conf").getConfig("re_svc_user_mgt")
-    val port     = config.getInt("port")
-    val mysqlUrl = config.getString("mysql_url")
-    Config(port, mysqlUrl)
   }
 }
