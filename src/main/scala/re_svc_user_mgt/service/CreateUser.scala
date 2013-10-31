@@ -4,8 +4,6 @@ import com.twitter.finagle.Service
 import com.twitter.util.Future
 import com.twitter.finagle.http.{Request, Response}
 
-import org.jboss.netty.handler.codec.http._
-
 /**
  * Create new user profile with associated credentials record; fail if username
  * already exists for auth_type; set the credentials to 'validated' if optional
@@ -19,11 +17,9 @@ import org.jboss.netty.handler.codec.http._
  * (username / auth_type combo exists, etc)
  */
 class CreateUser extends Service[Request, Response] {
-  def apply(req: Request): Future[Response] = {
-    val response = Response(new DefaultHttpResponse(
-      req.getProtocolVersion, HttpResponseStatus.NOT_FOUND
-    ))
-    response.write("Not found")
-    Future.value(response)
+  def apply(request: Request): Future[Response] = {
+    Future.value(request.response)
   }
 }
+
+object CreateUser extends CreateUser

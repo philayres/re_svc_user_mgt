@@ -4,8 +4,6 @@ import com.twitter.finagle.Service
 import com.twitter.util.Future
 import com.twitter.finagle.http.{Request, Response}
 
-import org.jboss.netty.handler.codec.http._
-
 /**
  * Authenticate existing user, querying username and password and auth_type.
  * Check if user profile enabled and user credentials validated.
@@ -18,15 +16,14 @@ import org.jboss.netty.handler.codec.http._
  * (user/password not found, not validated, not enabled)
  */
 class Authenticate extends Service[Request, Response] {
-  def apply(req: Request): Future[Response] = {
-    val username  = req.params.get("username").get
-    val password  = req.params.get("password").get
-    val auth_type = req.params.get("auth_type").get
+  def apply(request: Request): Future[Response] = {
+    val username  = request.params.get("username").get
+    val password  = request.params.get("password").get
+    val auth_type = request.params.get("auth_type").get
 
-    val response = Response(new DefaultHttpResponse(
-      req.getProtocolVersion, HttpResponseStatus.OK
-    ))
-
+    val response = request.response
     Future.value(response)
   }
 }
+
+object Authenticate extends Authenticate

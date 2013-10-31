@@ -7,18 +7,15 @@ import com.twitter.finagle.http.service.{NotFoundService, RoutingService}
 import re_svc_user_mgt.Config
 
 object Routes {
-  private val authenticate = new Authenticate
-  private val createUser   = new CreateUser
-
   val routes = RoutingService.byMethodAndPath { case (method, path) =>
     Config.log.debug(s"$method $path")
 
     (method, Path(path)) match {
       case Method.Post -> Root / "authenticate" =>
-        authenticate
+        Authenticate
 
       case Method.Post -> Root / "create_user" =>
-        createUser
+        CreateUser
 
       case Method.Patch -> Root / "enable_user" / Long(userId) =>
         new EnableUser(userId)

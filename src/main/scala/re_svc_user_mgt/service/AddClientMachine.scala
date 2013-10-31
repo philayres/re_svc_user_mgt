@@ -4,8 +4,6 @@ import com.twitter.finagle.Service
 import com.twitter.util.Future
 import com.twitter.finagle.http.{Request, Response}
 
-import org.jboss.netty.handler.codec.http._
-
 /**
  * Add / remove registered client machine and shared secret if the user is
  * authenticated and matchs an 'admin user / client' record in the database
@@ -16,11 +14,7 @@ import org.jboss.netty.handler.codec.http._
  * (JSON returning newly generated shared secret)
  */
 class AddClientMachine(username: String, authType: Int) extends Service[Request, Response] {
-  def apply(req: Request): Future[Response] = {
-    val response = Response(new DefaultHttpResponse(
-      req.getProtocolVersion, HttpResponseStatus.NOT_FOUND
-    ))
-    response.write("Not found")
-    Future.value(response)
+  def apply(request: Request): Future[Response] = {
+    Future.value(request.response)
   }
 }

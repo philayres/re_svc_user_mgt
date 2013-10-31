@@ -4,19 +4,13 @@ import com.twitter.finagle.Service
 import com.twitter.util.Future
 import com.twitter.finagle.http.{Request, Response}
 
-import org.jboss.netty.handler.codec.http._
-
 /**
  * Set the validated flag for a user credentials record.
  *
  * Params: username, auth_type, validated
  */
 class ValidateCredential(username: String, authType: Int) extends Service[Request, Response] {
-  def apply(req: Request): Future[Response] = {
-    val response = Response(new DefaultHttpResponse(
-      req.getProtocolVersion, HttpResponseStatus.NOT_FOUND
-    ))
-    response.write("Not found")
-    Future.value(response)
+  def apply(request: Request): Future[Response] = {
+    Future.value(request.response)
   }
 }
