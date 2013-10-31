@@ -11,6 +11,7 @@ http://stackoverflow.com/questions/1814532/1071-specified-key-was-too-long-max-k
 /*
 username:  A URI, email, or text username
 auth_type: A short integer representing the type of authorization system
+password:  SHA-256 with salt (total length of the hex is 64)
 */
 
 /* Core tables ---------------------------------------------------------------*/
@@ -46,7 +47,7 @@ CREATE TABLE credentials(
 
   username VARCHAR(1024) NOT NULL,
   auth_type INT NOT NULL,
-  password VARCHAR(255) NOT NULL,
+  password VARCHAR(64) NOT NULL,
   salt VARCHAR(255) NOT NULL,
   validated TINYINT NOT NULL DEFAULT 0,
 
@@ -79,9 +80,9 @@ INSERT INTO clients(created_at, name, client_type, shared_secret)
 INSERT INTO users(created_at, enabled)
  VALUES (NOW(), 1);
 
-/* Password: test123! (TODO: hash the password) */
+/* Password: test123! */
 INSERT INTO credentials(created_at, user_id, username, auth_type, password, salt, validated)
- VALUES (NOW(), 1, 'opadmin', 999, 'test123!', 'salt', 1);
+ VALUES (NOW(), 1, 'opadmin', 999, '1dbc26cbf94bfd0002a8aca964a7afc906301a4665e2a7b38b45214ad64a703e', 'test123!', 1);
 
 INSERT INTO admins(created_at, user_id)
  VALUES (NOW(), 1);

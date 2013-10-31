@@ -4,7 +4,7 @@ import org.json4s.NoTypeHints
 import org.json4s.native.Serialization
 
 object Json {
-  implicit val formats = Serialization.formats(NoTypeHints)
+  private implicit val formats = Serialization.formats(NoTypeHints)
 
   /**
    * Generates JSON string from case objects etc.
