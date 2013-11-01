@@ -53,7 +53,7 @@ Directory target/xitrum will be created, ready for deployment.
   config/
     re_svc_user_mgt.conf
 
-  bin/
+  script/
     start
     start.bat
 
@@ -67,6 +67,6 @@ To start the server:
 
 ::
 
-  bin/start
+  script/start
 
 To tune JVM memory, modify ``JAVA_OPTS`` in the start script.
