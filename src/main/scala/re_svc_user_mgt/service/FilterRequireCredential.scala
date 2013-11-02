@@ -51,11 +51,11 @@ object FilterRequireCredential extends FilterRequireCredential[Request] {
     }
   }
 
-  def getUserId(request: Request): Long = {
-    request.getHeader(REQUEST_HEADER_USER_ID).toLong
+  def getUserId(request: Request): Int = {
+    request.getHeader(REQUEST_HEADER_USER_ID).toInt
   }
 
-  private def setUserId(request: Request, userId: Long) {
+  private def setUserId(request: Request, userId: Int) {
     request.setHeader(REQUEST_HEADER_USER_ID, userId.toString)
   }
 }

@@ -24,7 +24,7 @@ object Routes {
       case Method.Post -> Root / "users" =>
         UsersCreate
 
-      case Method.Patch -> Root / "users" / Long(userId) / "enable" =>
+      case Method.Patch -> Root / "users" / Integer(userId) / "enable" =>
         new UsersEnable(userId)
 
       // Credentials -----------------------------------------------------------

@@ -25,7 +25,8 @@ CREATE TABLE clients(
   type INT NOT NULL,
   shared_secret VARCHAR(255) NOT NULL,
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  UNIQUE KEY index_name (name(255))
 ) ENGINE=InnoDB;
 
 CREATE TABLE users(
@@ -53,6 +54,7 @@ CREATE TABLE credentials(
 
   PRIMARY KEY (id),
   KEY index_user_id (user_id),
+  KEY index_username_auth_type (username(255), auth_type),
   FOREIGN KEY (user_id) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
@@ -74,7 +76,7 @@ CREATE TABLE admins(
 
 /* Bootstrap data ------------------------------------------------------------*/
 
-INSERT INTO clients(created_at, name, client_type, shared_secret)
+INSERT INTO clients(created_at, name, type, shared_secret)
  VALUES (NOW(), 'opclient1', 999, 'test123!');
 
 INSERT INTO users(created_at, enabled)

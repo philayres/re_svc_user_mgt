@@ -5,7 +5,7 @@ import org.apache.commons.codec.digest.DigestUtils
 
 object Credential {
   /** @return Left(error) or Right(userId) */
-  def authenticate(username: String, authType: Int, password: String): Either[String, Long] = {
+  def authenticate(username: String, authType: Int, password: String): Either[String, Int] = {
     DB.withConnection { con =>
       val ps = con.prepareStatement("SELECT * FROM credentials WHERE username = ? AND auth_type = ? LIMIT 1")
       ps.setString(1, username)
@@ -20,7 +20,7 @@ object Credential {
           val hashedPassword = rs.getString("password")
           val salt           = rs.getString("salt")
           if (checkPassword(password, salt, hashedPassword)) {
-            val userId = rs.getLong("user_id")
+            val userId = rs.getInt("user_id")
             getUserEnabled(con, userId) match {
               case None =>
                 Left("User not found")
@@ -43,7 +43,7 @@ object Credential {
   }
 
   /** @return Some(error) or None */
-  def create(userId: Long, username: String, authType: Int, password: String, validated: Boolean): Option[String] = {
+  def create(userId: Int, username: String, authType: Int, password: String, validated: Boolean): Option[String] = {
     Some("TODO")
   }
 
@@ -52,7 +52,7 @@ object Credential {
   }
 
   /** @return Some(userId) or None if not found */
-  def exists(username: String, authType: Int): Option[Long] = {
+  def exists(username: String, authType: Int): Option[Int] = {
     None
   }
 
@@ -70,9 +70,9 @@ object Credential {
     DigestUtils.sha256Hex(password + salt) == hashedPassword
 
   /** @return None if user not found */
-  private def getUserEnabled(con: Connection, userId: Long): Option[Boolean] = {
+  private def getUserEnabled(con: Connection, userId: Int): Option[Boolean] = {
     val ps = con.prepareStatement("SELECT enabled FROM users WHERE id = ?")
-    ps.setLong(1, userId)
+    ps.setInt(1, userId)
 
     val rs  = ps.executeQuery()
     val ret = if (rs.next()) {

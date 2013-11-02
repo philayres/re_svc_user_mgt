@@ -13,7 +13,7 @@ import re_svc_user_mgt.model.ClientMachine
  * Params: username, auth_type, password, client_name, client_type
  *
  * If the client_name does not already exist, return successful result: HTTP OK
- * (JSON returning newly generated shared secret)
+ * (JSON returning newly generated client ID and shared secret)
  */
 class ClientMachinesCreate extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
@@ -28,8 +28,8 @@ class ClientMachinesCreate extends Service[Request, Response] {
         response.status        = Status.BadRequest
         response.contentString = Json(Map("error" -> error))
 
-      case Right(sharedSecret) =>
-        response.contentString = Json(Map("shared_secret" -> sharedSecret))
+      case Right((clientId, sharedSecret)) =>
+        response.contentString = Json(Map("client_id" -> clientId, "shared_secret" -> sharedSecret))
     }
     response.setContentTypeJson()
     Future.value(response)
