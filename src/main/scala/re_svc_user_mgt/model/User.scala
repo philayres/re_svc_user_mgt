@@ -1,7 +1,19 @@
 package re_svc_user_mgt.model
 
 object User {
-  def isAdmin(userId: Int) = true
+  def isAdmin(userId: Int) = {
+    DB.withConnection { con =>
+      val ps = con.prepareStatement("SELECT user_id FROM admins WHERE user_id = ?")
+      ps.setInt(1, userId)
+
+      val rs  = ps.executeQuery()
+      val ret = rs.next()
+
+      rs.close()
+      ps.close()
+      ret
+    }
+  }
 
   /**
    * Create user and one credential.
