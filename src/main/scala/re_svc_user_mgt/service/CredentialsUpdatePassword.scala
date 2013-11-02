@@ -19,7 +19,7 @@ import re_svc_user_mgt.model.Credential
 class CredentialsUpdatePassword(username: String, authType: Int) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
     val newPassword = request.params.get("new_password").get
-    val forceNew    = request.params.getBoolean("force_new").getOrElse(false)
+    val forceNew    = request.params.getBooleanOrElse("force_new", false)
 
     if (forceNew) {
       Credential.updatePassword(username, authType, newPassword)

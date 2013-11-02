@@ -59,7 +59,7 @@ POST /users
 Request body params:
 
 * username, auth_type, password
-* validated: true|false
+* [validated: true|false], assume false
 
 Response body: {"user_id": userId}
 

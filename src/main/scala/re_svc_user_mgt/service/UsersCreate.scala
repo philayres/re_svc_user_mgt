@@ -23,7 +23,7 @@ class UsersCreate extends Service[Request, Response] {
     val username  = request.params.get("username").get
     val authType  = request.params.getInt("auth_type").get
     val password  = request.params.get("password").get
-    val validated = request.params.getBoolean("validated").getOrElse(false)
+    val validated = request.params.getBooleanOrElse("validated", false)
 
     val response = request.response
     User.create(username, authType, password, validated) match {
