@@ -6,40 +6,7 @@ import org.apache.commons.codec.digest.DigestUtils
 object Credential {
   /** @return Left(error) or Right(userId) */
   def authenticate(username: String, authType: Int, password: String): Either[String, Int] = {
-    DB.withConnection { con =>
-      val ps = con.prepareStatement("SELECT * FROM credentials WHERE username = ? AND auth_type = ? LIMIT 1")
-      ps.setString(1, username)
-      ps.setInt   (2, authType)
-
-      val rs  = ps.executeQuery()
-      val ret = if (rs.next()) {
-        val validated = rs.getInt("validated")
-        if (validated == 0) {
-          Left("Credential not validated")
-        } else {
-          val hashedPassword = rs.getString("password")
-          val salt           = rs.getString("salt")
-          if (Secure.checkPassword(password, salt, hashedPassword)) {
-            val userId = rs.getInt("user_id")
-            getUserEnabled(con, userId) match {
-              case None =>
-                Left("User not found")
-
-              case Some(enabled) =>
-                if (enabled) Right(userId) else Left("User disabled")
-            }
-          } else {
-            Left("Wrong password")
-          }
-        }
-      } else {
-        Left("Credential not found")
-      }
-
-      rs.close()
-      ps.close()
-      ret
-    }
+    authenticateOrCheckExistence(username, authType, Some(password))
   }
 
   /** @return Some(error) or None */
@@ -60,7 +27,10 @@ object Credential {
 
   /** @return Some(userId) or None if not found */
   def exists(username: String, authType: Int): Option[Int] = {
-    None
+    authenticateOrCheckExistence(username, authType, None) match {
+      case Left(error)   => None
+      case Right(userId) => Some(userId)
+    }
   }
 
   def updatePassword(username: String, authType: Int, newPassword: String) {
@@ -92,6 +62,60 @@ object Credential {
   }
 
   //----------------------------------------------------------------------------
+
+  /**
+   * @param passwordo None: do not check password
+   *
+   * @return Left(error) or Right(userId)
+   */
+  def authenticateOrCheckExistence(username: String, authType: Int, passwordo: Option[String]): Either[String, Int] = {
+    DB.withConnection { con =>
+      val ps = con.prepareStatement("SELECT * FROM credentials WHERE username = ? AND auth_type = ? LIMIT 1")
+      ps.setString(1, username)
+      ps.setInt   (2, authType)
+
+      val rs  = ps.executeQuery()
+      val ret = if (rs.next()) {
+        val validated = rs.getInt("validated")
+        if (validated == 0) {
+          Left("Credential not validated")
+        } else {
+          val userId = rs.getInt("user_id")
+          passwordo match {
+            case Some(password) =>
+              val hashedPassword = rs.getString("password")
+              val salt           = rs.getString("salt")
+              if (Secure.checkPassword(password, salt, hashedPassword)) {
+                getUserEnabled(con, userId) match {
+                  case None =>
+                    Left("User not found")
+
+                  case Some(enabled) =>
+                    if (enabled) Right(userId) else Left("User disabled")
+                }
+              } else {
+                Left("Wrong password")
+              }
+
+            case None =>
+              getUserEnabled(con, userId) match {
+                case None =>
+                  Left("User not found")
+
+                case Some(enabled) =>
+                  if (enabled) Right(userId) else Left("User disabled")
+              }
+          }
+        }
+      } else {
+        Left("Credential not found")
+      }
+
+      rs.close()
+      ps.close()
+      ret
+    }
+  }
 
   /** @return None if user not found */
   private def getUserEnabled(con: Connection, userId: Int): Option[Boolean] = {
