@@ -48,7 +48,14 @@ object Credential {
   }
 
   def delete(username: String, authType: Int) {
+    DB.withConnection { con =>
+      val ps = con.prepareStatement("DELETE FROM credentials WHERE username = ? AND auth_type = ?")
+      ps.setString(1, username)
+      ps.setInt   (2, authType)
 
+      ps.executeUpdate()
+      ps.close()
+    }
   }
 
   /** @return Some(userId) or None if not found */
