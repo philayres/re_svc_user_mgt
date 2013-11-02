@@ -14,7 +14,7 @@ import com.twitter.finagle.http.{Request, Response}
  *
  * Failed return: HTTP failed, with a JSON body representing the reason
  */
-class UpdateCredentialPassword(username: String, authType: Int) extends Service[Request, Response] {
+class CredentialsUpdatePassword(username: String, authType: Int) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
     Future.value(request.response)
   }

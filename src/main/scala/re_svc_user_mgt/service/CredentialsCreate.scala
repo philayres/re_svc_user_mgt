@@ -11,8 +11,10 @@ import com.twitter.finagle.http.{Request, Response}
  *
  * Params: username, password, auth_type, new_username, new_password, new_auth_type
  */
-class AddCredential(username: String, authType: Int) extends Service[Request, Response] {
+class CredentialsCreate extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
     Future.value(request.response)
   }
 }
+
+object CredentialsCreate extends CredentialsCreate

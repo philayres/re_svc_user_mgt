@@ -22,7 +22,7 @@ CREATE TABLE clients(
   updated_at TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
 
   name VARCHAR(1024) NOT NULL,
-  client_type INT NOT NULL,
+  type INT NOT NULL,
   shared_secret VARCHAR(255) NOT NULL,
 
   PRIMARY KEY (id)

@@ -17,7 +17,7 @@ import re_svc_user_mgt.model.DB
  * Failed return: HTTP not authorized, with a JSON body representing the reason
  * (user/password not found, not validated, not enabled)
  */
-class Authenticate extends Service[Request, Response] {
+class CredentialsAuthenticate extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
     val username = request.params.get("username").get
     val authType = request.params.getInt("auth_type").get
@@ -37,4 +37,4 @@ class Authenticate extends Service[Request, Response] {
   }
 }
 
-object Authenticate extends Authenticate
+object CredentialsAuthenticate extends CredentialsAuthenticate

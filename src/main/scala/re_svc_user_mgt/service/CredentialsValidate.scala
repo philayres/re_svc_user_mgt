@@ -5,11 +5,11 @@ import com.twitter.util.Future
 import com.twitter.finagle.http.{Request, Response}
 
 /**
- * Set the enabled/disabled flag for a user profile.
+ * Set the validated flag for a user credentials record.
  *
- * Params: user_id, enabled=true|false
+ * Params: username, auth_type, validated
  */
-class EnableUser(userId: Long) extends Service[Request, Response] {
+class CredentialsValidate(username: String, authType: Int) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
     Future.value(request.response)
   }

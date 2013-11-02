@@ -16,10 +16,10 @@ import com.twitter.finagle.http.{Request, Response}
  * Failed return: HTTP failed, with a JSON body representing the reason
  * (username / auth_type combo exists, etc)
  */
-class CreateUser extends Service[Request, Response] {
+class UsersCreate extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
     Future.value(request.response)
   }
 }
 
-object CreateUser extends CreateUser
+object UsersCreate extends UsersCreate

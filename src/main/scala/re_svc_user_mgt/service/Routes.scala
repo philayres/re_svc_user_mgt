@@ -11,35 +11,43 @@ object Routes {
     Config.log.debug(s"$method $path")
 
     (method, Path(path)) match {
-      case Method.Post -> Root / "authenticate" =>
-        Authenticate
+      // Client machines -------------------------------------------------------
 
-      case Method.Post -> Root / "create_user" =>
-        CreateUser
+      case Method.Post -> Root / "client_machines" =>
+        ClientMachinesCreate
 
-      case Method.Patch -> Root / "enable_user" / Long(userId) =>
-        new EnableUser(userId)
+      case Method.Delete -> Root / "client_machines" / clientName =>
+        new ClientMachinesDelete(clientName)
 
-      case Method.Patch -> Root / "update_password" / username / Integer(authType) =>
-        new UpdateCredentialPassword(username, authType)
+      // Users -----------------------------------------------------------------
 
-      case Method.Patch -> Root / "validate_credential" / username / Integer(authType) =>
-        new ValidateCredential(username, authType)
+      case Method.Post -> Root / "users" =>
+        UsersCreate
 
-      case Method.Delete -> Root / "delete_credential" / username / Integer(authType) =>
-        new DeleteCredential(username, authType)
+      case Method.Patch -> Root / "users" / Long(userId) / "enable" =>
+        new UsersEnable(userId)
 
-      case Method.Get -> Root / "credential_exists" / username / Integer(authType) =>
-        new CredentialExists(username, authType)
+      // Credentials -----------------------------------------------------------
 
-      case Method.Post -> Root / "add_credential" / username / Integer(authType) =>
-        new AddCredential(username, authType)
+      case Method.Get -> Root / "credentials" / username / Integer(authType) =>
+        new CredentialsExists(username, authType)
 
-      case Method.Post -> Root / "add_client_machine" / username / Integer(authType) =>
-        new AddClientMachine(username, authType)
+      case Method.Post -> Root / "credentials" / "authenticate" =>
+        CredentialsAuthenticate
 
-      case Method.Post -> Root / "remove_client_machine" / username / Integer(authType) =>
-        new RemoveClientMachine(username, authType)
+      case Method.Post -> Root / "credentials" =>
+        CredentialsCreate
+
+      case Method.Patch -> Root / "credentials" / username / Integer(authType) / "validate" =>
+        new CredentialsValidate(username, authType)
+
+      case Method.Patch -> Root / "credentials" / username / Integer(authType) / "update_password" =>
+        new CredentialsUpdatePassword(username, authType)
+
+      case Method.Delete -> Root / "credentials" / username / Integer(authType) =>
+        new CredentialsDelete(username, authType)
+
+      // Not found -------------------------------------------------------------
 
       case _ =>
         NotFoundService

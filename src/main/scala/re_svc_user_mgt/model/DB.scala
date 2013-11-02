@@ -26,6 +26,11 @@ object DB {
     }
   }
 
+  /** @return Left(reason) or Right(sharedSecret) */
+  def addClientMachine(username: String, authType: Int, clientName: String, clientType: Int): Either[String, String] = {
+      null
+  }
+
   /** @return Left(reason) or Right(userId) */
   def authenticate(username: String, authType: Int, password: String): Either[String, Long] = {
     withConnection { con =>

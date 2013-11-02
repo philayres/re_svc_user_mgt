@@ -11,7 +11,7 @@ import com.twitter.finagle.http.{Request, Response}
  *
  * Params: remove_client_name, username, auth_type, password
  */
-class RemoveClientMachine(username: String, authType: Int) extends Service[Request, Response] {
+class ClientMachinesDelete(clientName: String) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
     Future.value(request.response)
   }
