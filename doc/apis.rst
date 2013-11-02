@@ -12,7 +12,7 @@ Missing param:
 Nonce check failure:
 
 * Status: 401 Unauthorized
-* Body: {"error": "Nonce check failed"}
+* Body: {"error": "Nonce check failed (<reason>)"}
 
 Wrong user info in request (username, auth_type, password):
 

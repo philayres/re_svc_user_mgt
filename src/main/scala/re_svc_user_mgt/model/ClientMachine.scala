@@ -4,6 +4,21 @@ import java.sql.Statement
 import scala.util.Try
 
 object ClientMachine {
+  /** @return Some(sharedSecret) or None */
+  def getSharedSecret(clientId: Int): Option[String] = {
+    DB.withConnection { con =>
+      val ps = con.prepareStatement("SELECT shared_secret FROM clients WHERE id = ?")
+      ps.setInt(1, clientId)
+
+      val rs  = ps.executeQuery()
+      val ret = if (rs.next()) Some(rs.getString("shared_secret")) else None
+
+      rs.close()
+      ps.close()
+      ret
+    }
+  }
+
   /** @return Left(error) or Right((clientId, sharedSecret)) */
   def create(clientName: String, clientType: Int): Either[String, (Int, String)] = {
     DB.withConnection { con =>
