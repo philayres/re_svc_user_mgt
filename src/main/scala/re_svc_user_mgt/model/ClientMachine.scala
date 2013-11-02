@@ -37,7 +37,16 @@ object ClientMachine {
 
   /** @return Some(error) or None */
   def delete(clientName: String): Option[String] = {
-    Some("TODO")
+    DB.withConnection { con =>
+      val ps = con.prepareStatement("DELETE FROM clients WHERE name = ?")
+      ps.setString(1, clientName)
+
+      val deletedRows = ps.executeUpdate()
+      val ret         = if (deletedRows < 1) Some("Not found") else None
+
+      ps.close()
+      ret
+    }
   }
 
   private def makeSecret(): String = {
