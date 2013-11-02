@@ -54,7 +54,7 @@ CREATE TABLE credentials(
 
   PRIMARY KEY (id),
   KEY index_user_id (user_id),
-  KEY index_username_auth_type (username(255), auth_type),
+  UNIQUE KEY index_username_auth_type (username(255), auth_type),
   FOREIGN KEY (user_id) REFERENCES users(id)
 ) ENGINE=InnoDB;
 

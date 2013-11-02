@@ -1,6 +1,7 @@
 package re_svc_user_mgt.model
 
 import java.sql.Connection
+import scala.util.{Try, Success, Failure}
 import org.apache.commons.codec.digest.DigestUtils
 
 object Credential {
@@ -11,7 +12,29 @@ object Credential {
 
   /** @return Some(error) or None */
   def create(userId: Int, username: String, authType: Int, password: String, validated: Boolean): Option[String] = {
-    Some("TODO")
+    val salt           = Secure.makeSecret()
+    val hashedPassword = Secure.hashPassword(password, salt)
+
+    DB.withConnection { con =>
+      val ps = con.prepareStatement("INSERT INTO credentials(created_at, user_id, username, auth_type, password, salt, validated) VALUES (NOW(), ?, ?, ?, ?, ?, ?)")
+      ps.setInt   (1, userId)
+      ps.setString(2, username)
+      ps.setInt   (3, authType)
+      ps.setString(4, hashedPassword)
+      ps.setString(5, salt)
+      ps.setInt   (6, if (validated) 1 else 0)
+
+      val ret = Try(ps.executeUpdate()) match {
+        case Success(insertedRows) =>
+          None
+
+        case Failure(e) =>
+          Some("Conflict")
+      }
+
+      ps.close()
+      ret
+    }
   }
 
   def delete(username: String, authType: Int) {
