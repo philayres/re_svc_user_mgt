@@ -19,8 +19,8 @@ class ClientMachinesCreate extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
     // User check is done at Routes
 
-    val clientName = request.params.get("client_name").get
-    val clientType = request.params.getInt("client_type").get
+    val clientName = requireParamString(request, "client_name")
+    val clientType = requireParamInt(request, "client_type")
 
     val response = request.response
     ClientMachine.create(clientName, clientType) match {

@@ -13,7 +13,7 @@ import re_svc_user_mgt.model.User
  */
 class UsersEnable(userId: Int) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
-    val enabled = request.params.getBoolean("enabled").get
+    val enabled = requireParamBoolean(request, "enabled")
     User.enable(userId, enabled)
     Future.value(request.response)
   }

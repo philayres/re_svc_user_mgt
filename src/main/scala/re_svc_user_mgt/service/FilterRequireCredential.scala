@@ -33,9 +33,9 @@ object FilterRequireCredential extends FilterRequireCredential[Request] {
    * right away to the client.
    */
   def checkUser(request: Request): Boolean = {
-    val username = request.params.get("username").get
-    val authType = request.params.getInt("auth_type").get
-    val password = request.params.get("password").get
+    val username = requireParamString(request, "username")
+    val authType = requireParamInt(request, "auth_type")
+    val password = requireParamString(request, "password")
 
     Credential.authenticate(username, authType, password) match {
       case Left(error) =>

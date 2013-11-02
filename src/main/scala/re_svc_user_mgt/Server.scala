@@ -4,9 +4,8 @@ import java.net.InetSocketAddress
 
 import com.twitter.finagle.builder.ServerBuilder
 import com.twitter.finagle.http.{Http, Request, RichHttp}
-import com.twitter.finagle.http.filter.ExceptionFilter
 
-import re_svc_user_mgt.service.{FilterNonceCheck, Routes}
+import re_svc_user_mgt.service.{FilterException, FilterNonceCheck, Routes}
 
 object Server extends App {
   val port = Config.config.port
@@ -16,5 +15,5 @@ object Server extends App {
     .codec(RichHttp[Request](Http()))
     .bindTo(new InetSocketAddress(port))
     .name(Config.LOG_NODE)
-    .build(ExceptionFilter andThen FilterNonceCheck andThen Routes.routes)
+    .build(FilterException andThen FilterNonceCheck andThen Routes.routes)
 }

@@ -4,6 +4,11 @@ Common info about response
 When response body is non-empty, its Content-Type header is set to:
 application/json;charset=utf-8
 
+Missing param:
+
+* Status: 400 Bad Request
+* Body: {"error": "Missing param: <param name>"}
+
 Nonce check failure:
 
 * Status: 401 Unauthorized

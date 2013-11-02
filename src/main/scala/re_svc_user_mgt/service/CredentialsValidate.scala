@@ -13,7 +13,7 @@ import re_svc_user_mgt.model.Credential
  */
 class CredentialsValidate(username: String, authType: Int) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
-    val validated = request.params.getBoolean("validated").get
+    val validated = requireParamBoolean(request, "validated")
     Credential.validate(username, authType, validated)
     Future.value(request.response)
   }

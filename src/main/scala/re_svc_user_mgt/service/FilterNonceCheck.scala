@@ -9,7 +9,7 @@ import re_svc_user_mgt.Config.log
 /** Idea: http://tyleregeto.com/article/a-guide-to-nonce */
 class FilterNonceCheck[REQUEST <: Request] extends SimpleFilter[REQUEST, Response] {
   def apply(request: REQUEST, service: Service[REQUEST, Response]): Future[Response] = {
-    val clientId = request.params.get("client_id").get
+    val clientId = requireParamString(request, "client_id")
 
     // FIXME
     val passed = true
