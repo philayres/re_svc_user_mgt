@@ -4,7 +4,7 @@ import com.twitter.finagle.Service
 import com.twitter.util.Future
 import com.twitter.finagle.http.{Request, Response}
 
-import org.jboss.netty.handler.codec.http._
+import re_svc_user_mgt.model.Credential
 
 /**
  * Delete the user credential from the table.
@@ -13,6 +13,7 @@ import org.jboss.netty.handler.codec.http._
  */
 class CredentialsDelete(username: String, authType: Int) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
+    Credential.delete(username, authType)
     Future.value(request.response)
   }
 }

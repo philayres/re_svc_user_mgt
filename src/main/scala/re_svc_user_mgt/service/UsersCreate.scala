@@ -9,7 +9,7 @@ import com.twitter.finagle.http.{Request, Response}
  * already exists for auth_type; set the credentials to 'validated' if optional
  * validated=true otherwise assume false.
  *
- * Params: username, password, auth_type, [validated=true|false]
+ * Params: username, auth_type, password, [validated=true|false]
  *
  * Successful return: HTTP OK with a JSON
  *

@@ -14,10 +14,10 @@ object Routes {
       // Client machines -------------------------------------------------------
 
       case Method.Post -> Root / "client_machines" =>
-        ClientMachinesCreate
+        FilterRequireCredential andThen FilterRequireAdmin andThen ClientMachinesCreate
 
       case Method.Delete -> Root / "client_machines" / clientName =>
-        new ClientMachinesDelete(clientName)
+        FilterRequireCredential andThen FilterRequireAdmin andThen { new ClientMachinesDelete(clientName) }
 
       // Users -----------------------------------------------------------------
 
@@ -33,10 +33,10 @@ object Routes {
         new CredentialsExists(username, authType)
 
       case Method.Post -> Root / "credentials" / "authenticate" =>
-        CredentialsAuthenticate
+        FilterRequireCredential andThen CredentialsAuthenticate
 
       case Method.Post -> Root / "credentials" =>
-        CredentialsCreate
+        FilterRequireCredential andThen CredentialsCreate
 
       case Method.Patch -> Root / "credentials" / username / Integer(authType) / "validate" =>
         new CredentialsValidate(username, authType)

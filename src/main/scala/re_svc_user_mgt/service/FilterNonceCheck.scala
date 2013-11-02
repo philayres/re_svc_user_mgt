@@ -7,7 +7,7 @@ import com.twitter.util.Future
 import re_svc_user_mgt.Config.log
 
 /** Idea: http://tyleregeto.com/article/a-guide-to-nonce */
-class NonceCheckFilter[REQUEST <: Request] extends SimpleFilter[REQUEST, Response] {
+class FilterNonceCheck[REQUEST <: Request] extends SimpleFilter[REQUEST, Response] {
   def apply(request: REQUEST, service: Service[REQUEST, Response]): Future[Response] = {
     // FIXME
     val passed = true
@@ -24,4 +24,4 @@ class NonceCheckFilter[REQUEST <: Request] extends SimpleFilter[REQUEST, Respons
   }
 }
 
-object NonceCheckFilter extends NonceCheckFilter[Request]
+object FilterNonceCheck extends FilterNonceCheck[Request]

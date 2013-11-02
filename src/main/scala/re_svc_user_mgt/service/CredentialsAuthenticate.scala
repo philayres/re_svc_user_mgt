@@ -4,13 +4,13 @@ import com.twitter.finagle.Service
 import com.twitter.util.Future
 import com.twitter.finagle.http.{Request, Response, Status}
 
-import re_svc_user_mgt.model.DB
+import re_svc_user_mgt.model.Credential
 
 /**
  * Authenticate existing user, querying username and password and auth_type.
  * Check if user profile enabled and user credentials validated.
  *
- * Params: username, password, auth_type
+ * Params: username, auth_type, password
  *
  * Successful return: HTTP OK with a JSON user_id
  *
@@ -19,19 +19,11 @@ import re_svc_user_mgt.model.DB
  */
 class CredentialsAuthenticate extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
-    val username = request.params.get("username").get
-    val authType = request.params.getInt("auth_type").get
-    val password = request.params.get("password").get
+    // User check is done at Routes
 
-    val response = request.response
-    DB.authenticate(username, authType, password) match {
-      case Left(reason) =>
-        response.status = Status.Unauthorized
-        response.contentString = Json(Map("reason" -> reason))
-
-      case Right(userId) =>
-        response.contentString = Json(Map("user_id" -> userId))
-    }
+    val userId             = FilterRequireCredential.getUserId(request)
+    val response           = request.response
+    response.contentString = Json(Map("user_id" -> userId))
     response.setContentTypeJson()
     Future.value(response)
   }
