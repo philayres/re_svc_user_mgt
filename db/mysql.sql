@@ -14,6 +14,13 @@ auth_type: A short integer representing the type of authorization system
 password:  SHA-256 with salt (total length of the hex is 64)
 */
 
+/*
+created_at and updated_at:
+MySQL does not support 2 columns both having CURRENT_TIMESTAMP by default.
+Thus we use CURRENT_TIMESTAMP for updated_at.
+For created_at, use DEFAULT 0 and NOW() when inserting.
+*/
+
 /* Core tables ---------------------------------------------------------------*/
 
 CREATE TABLE clients(
