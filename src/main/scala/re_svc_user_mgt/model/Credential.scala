@@ -68,7 +68,15 @@ object Credential {
   }
 
   def validate(username: String, authType: Int, validated: Boolean) {
+    DB.withConnection { con =>
+      val ps = con.prepareStatement("UPDATE credentials SET validated = ? WHERE username = ? AND auth_type = ?")
+      ps.setInt   (1, if (validated) 1 else 0)
+      ps.setString(2, username)
+      ps.setInt   (3, authType)
 
+      ps.executeUpdate()
+      ps.close()
+    }
   }
 
   //----------------------------------------------------------------------------
