@@ -1,15 +1,13 @@
 package re_svc_user_mgt.model
 
 import java.sql.Statement
-import java.util.UUID
 import scala.util.Try
-import org.apache.commons.codec.digest.DigestUtils
 
 object ClientMachine {
   /** @return Left(error) or Right((clientId, sharedSecret)) */
   def create(clientName: String, clientType: Int): Either[String, (Int, String)] = {
     DB.withConnection { con =>
-      val sharedSecret = makeSecret()
+      val sharedSecret = Secure.makeSecret()
 
       val ps = con.prepareStatement(
         "INSERT INTO clients(created_at, name, type, shared_secret) VALUES (NOW(), ?, ?, ?)",
@@ -47,10 +45,5 @@ object ClientMachine {
       ps.close()
       ret
     }
-  }
-
-  private def makeSecret(): String = {
-    val secret = UUID.randomUUID().toString + System.currentTimeMillis()
-    DigestUtils.sha256Hex(secret)
   }
 }

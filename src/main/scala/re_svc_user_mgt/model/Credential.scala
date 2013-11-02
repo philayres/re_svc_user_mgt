@@ -19,7 +19,7 @@ object Credential {
         } else {
           val hashedPassword = rs.getString("password")
           val salt           = rs.getString("salt")
-          if (checkPassword(password, salt, hashedPassword)) {
+          if (Secure.checkPassword(password, salt, hashedPassword)) {
             val userId = rs.getInt("user_id")
             getUserEnabled(con, userId) match {
               case None =>
@@ -64,7 +64,19 @@ object Credential {
   }
 
   def updatePassword(username: String, authType: Int, newPassword: String) {
+    val salt           = Secure.makeSecret()
+    val hashedPassword = Secure.hashPassword(newPassword, salt)
 
+    DB.withConnection { con =>
+      val ps = con.prepareStatement("UPDATE credentials SET password = ?, salt = ? WHERE username = ? AND auth_type = ?")
+      ps.setString(1, hashedPassword)
+      ps.setString(2, salt)
+      ps.setString(3, username)
+      ps.setInt   (4, authType)
+
+      ps.executeUpdate()
+      ps.close()
+    }
   }
 
   def validate(username: String, authType: Int, validated: Boolean) {
@@ -80,9 +92,6 @@ object Credential {
   }
 
   //----------------------------------------------------------------------------
-
-  private def checkPassword(password: String, salt: String, hashedPassword: String): Boolean =
-    DigestUtils.sha256Hex(password + salt) == hashedPassword
 
   /** @return None if user not found */
   private def getUserEnabled(con: Connection, userId: Int): Option[Boolean] = {
