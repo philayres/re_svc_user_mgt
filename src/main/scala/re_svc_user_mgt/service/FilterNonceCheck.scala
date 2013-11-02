@@ -9,6 +9,8 @@ import re_svc_user_mgt.Config.log
 /** Idea: http://tyleregeto.com/article/a-guide-to-nonce */
 class FilterNonceCheck[REQUEST <: Request] extends SimpleFilter[REQUEST, Response] {
   def apply(request: REQUEST, service: Service[REQUEST, Response]): Future[Response] = {
+    val clientId = request.params.get("client_id")
+
     // FIXME
     val passed = true
 
@@ -16,9 +18,11 @@ class FilterNonceCheck[REQUEST <: Request] extends SimpleFilter[REQUEST, Respons
       service(request)
     } else {
       log.warning("Nonce check failed: " + request.toString)
-      val response = request.response
-      response.status = Status.Forbidden
-      response.write("Nonce check failed")
+
+      val response           = request.response
+      response.status        = Status.Unauthorized
+      response.contentString = Json(Map("error" -> "Nonce check failed"))
+      response.setContentTypeJson()
       Future.value(response)
     }
   }

@@ -35,7 +35,7 @@ object Credential {
         None
 
       case Failure(e) =>
-        Some("Conflict")
+        Some("Duplicate username + auth_type pair")
     }
 
     ps.close()
