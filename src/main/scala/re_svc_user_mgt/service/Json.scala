@@ -4,11 +4,11 @@ import org.json4s.NoTypeHints
 import org.json4s.native.Serialization
 
 object Json {
-  private implicit val formats = Serialization.formats(NoTypeHints)
+  private implicit val noTypeHints = Serialization.formats(NoTypeHints)
 
   /**
-   * Generates JSON string from case objects etc.
+   * Generates JSON string from Scala object (case class, Map, Seq etc.).
    * See https://github.com/json4s/json4s#serialization
    */
-  def apply(any: AnyRef): String = Serialization.write(any)
+  def apply(scalaObject: AnyRef): String = Serialization.write(scalaObject)(noTypeHints)
 }
