@@ -32,5 +32,5 @@ unmanagedClasspath in Compile <+= (baseDirectory) map { bd => Attributed.blank(b
 // For "sbt run"
 unmanagedClasspath in Runtime <+= (baseDirectory) map { bd => Attributed.blank(bd / "config") }
 
-// Copy these to target/xitrum when sbt/sbt xitrum-package is run
+// Copy these to target/xitrum when "sbt xitrum-package" is run
 XitrumPackage.copy("config", "db", "script")

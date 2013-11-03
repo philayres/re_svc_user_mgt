@@ -1,7 +1,4 @@
-re_svc_user_mgt
-===============
-
-RE Service for User Management
+Scala server side for RE Service for User Management.
 
 Source code
 -----------
@@ -15,21 +12,21 @@ Create Eclipse project for development
 
 ::
 
-  sbt/sbt eclipse
+  sbt eclipse
 
 Create IntelliJ project for development
 ---------------------------------------
 
 ::
 
-  sbt/sbt gen-idea
+  sbt gen-idea
 
 Run in development mode
 -----------------------
 
 ::
 
-  sbt/sbt run
+  sbt run
 
 Log:
 
@@ -44,7 +41,7 @@ Prepare deployment files:
 
 ::
 
-  sbt/sbt xitrum-package
+  sbt xitrum-package
 
 Directory target/xitrum will be created, ready for deployment.
 
