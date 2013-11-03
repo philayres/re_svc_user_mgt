@@ -1,9 +1,57 @@
 Nonce check
 -----------
 
-Authorization header must be ``<client ID> <nonce> <milisecond timestamp>``.
+Each client has its own client ID and shared secret (the server knows the pair
+client ID and shared secret).
 
-TODO: more details
+For all requests, client must send this Authorization header:
+
+::
+
+ <nonce> <client ID> <milisecond timestamp>
+
+Creating nonce
+~~~~~~~~~~~~~~
+
+::
+
+  nonce = sha256Hex(method + path + content + clientId + sharedSecret + timestamp)
+
+For requests that does not contain body content (e.g. GET), ``content`` is empty
+string.
+
+For example, when the client wants to send this:
+
+* Method: POST
+* Path: /client_machines?foo=1&bar=2
+* Content (POST body): username=opadmin&auth_type=999&client_name=c1&client_type=1&password=test123%21
+
+It creates this nonce:
+
+::
+
+  timestamp = <current time in miliseconds>
+
+  nonce = sha256Hex(
+    "POST" +
+    "/client_machines?foo=1&bar=2" +
+    "username=opadmin&auth_type=999&client_name=c1&client_type=1&password=test123%21" +
+    clientId +
+    sharedSecret +
+    timestamp
+  )
+
+The full request will look like this:
+
+::
+
+  POST /client_machines?foo=1&bar=2 HTTP/1.1
+  Authorization: <nonce> <clientId> <timestamp>
+  Host: localhost:8000
+  Content-Type: application/x-www-form-urlencoded
+  Content-Length: 79
+
+  username=opadmin&auth_type=999&client_name=c1&client_type=1&password=test123%21
 
 Common info about response
 --------------------------
