@@ -1,3 +1,10 @@
+Nonce check
+-----------
+
+Authorization header must be ``<client ID> <nonce> <milisecond timestamp>``.
+
+TODO: more details
+
 Common info about response
 --------------------------
 
