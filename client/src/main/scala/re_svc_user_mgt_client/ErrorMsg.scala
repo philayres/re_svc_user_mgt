@@ -9,12 +9,18 @@ import org.json4s.native.JsonMethods._
 object ErrorMsg {
   def apply(response: Response): String = {
     val content = response.contentString
-    val json    = parse(content)
+    response.contentType match {
+      case Some(t) if (t.contains("json")) =>
+        val json = parse(content)
 
-    val list = for {
-      JObject(child) <- json
-      JField("error", JString(error))  <- child
-    } yield error
-    list(0)
+        val list = for {
+          JObject(child) <- json
+          JField("error", JString(error))  <- child
+        } yield error
+        list(0)
+
+      case _ =>
+        if (content.isEmpty) response.status.toString else content
+    }
   }
 }

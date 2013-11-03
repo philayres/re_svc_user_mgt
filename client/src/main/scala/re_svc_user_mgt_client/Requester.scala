@@ -7,7 +7,10 @@ import com.twitter.finagle.builder.ClientBuilder
 import com.twitter.finagle.http.{Http, Request, RequestBuilder, Response, RichHttp, SimpleElement}
 import com.twitter.util.Future
 
-import org.jboss.netty.handler.codec.http.HttpMethod
+import org.apache.commons.codec.digest.DigestUtils
+import org.jboss.netty.handler.codec.http.HttpHeaders.Names.AUTHORIZATION
+import org.jboss.netty.handler.codec.http.{HttpRequest, HttpMethod}
+import org.jboss.netty.util.CharsetUtil
 
 class Requester(
   clientId: Int, sharedSecret: String,
@@ -44,22 +47,32 @@ class Requester(
 
   private def request(method: HttpMethod, path: Seq[Any], form: Map[String, Any] = Map.empty): Future[Response] = {
     val builder = RequestBuilder()
-      .addHeader("Authorization", s"$clientId nonce ${System.currentTimeMillis()}")
       .url(new URL(protocol, host, port, mkPath(path)))
 
-    if (form.nonEmpty) {
+    val req = if (form.nonEmpty) {
       val elems = form.toSeq.map { case (k, v) => SimpleElement(k, v.toString) }
       val req   = builder.add(elems).buildFormPost()
       req.setMethod(method)
-      client(Request(req))
+      req
     } else {
-      val req = builder.build(method, None)
-      client(Request(req))
+      builder.build(method, None)
     }
+
+    addNonce(req)
+    client(Request(req))
   }
 
   private def mkPath(path: Seq[Any]): String = {
     val encoded = path.map { elem => URLEncoder.encode(elem.toString, "UTF8") }
     "/" + encoded.mkString("/")
+  }
+
+  private def addNonce(request: HttpRequest) {
+    val method    = request.getMethod
+    val path      = request.getUri
+    val content   = request.getContent.toString(CharsetUtil.UTF_8)  // Empty string (not null) if the content is empty
+    val timestamp = System.currentTimeMillis()
+    val nonce     = DigestUtils.sha256Hex(method + path + content + clientId + sharedSecret + timestamp)
+    request.addHeader(AUTHORIZATION, s"$nonce $clientId $timestamp")
   }
 }
