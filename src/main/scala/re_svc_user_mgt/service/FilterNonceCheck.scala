@@ -38,7 +38,8 @@ class FilterNonceCheck[REQUEST <: Request] extends SimpleFilter[REQUEST, Respons
 
   /** @return Some(error) or None */
   private def checkNonce(request: Request, sharedSecret: String): Option[String] = {
-    Some("TODO")
+    // FIXME
+    None
   }
 }
 

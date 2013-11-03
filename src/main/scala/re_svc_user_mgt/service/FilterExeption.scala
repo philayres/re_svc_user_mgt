@@ -31,32 +31,26 @@ class FilterException[REQUEST <: Request] extends SimpleFilter[REQUEST, Response
     } rescue {
       case e: MissingRequiredParamException =>
         // Return 400 Bad Request instead of 500 response when required param is missing
-        val response = request.response
-        response.status = Status.BadRequest
+        val response           = request.response
+        response.status        = Status.BadRequest
         response.contentString = Json(Map("error" -> s"Missing param: ${e.paramName}"))
         response.setContentTypeJson()
         Future.value(response)
       case e: CancelledRequestException =>
-        // This only happens when ChannelService cancels a reply.
-        log.warning("cancelled request: uri:%s", request.getUri)
-        val response = request.response
-        response.status = ClientClosedRequestStatus
-        response.clearContent()
+        // This only happens when ChannelService cancels a reply
+        log.warning("Cancelled request: %s", request.getUri)
+        val response           = request.response
+        response.status        = ClientClosedRequestStatus
+        response.contentString = Json(Map("error" -> "Cancelled request"))
+        response.setContentTypeJson()
         Future.value(response)
-      case e =>
-        try {
-          log.warning(e, "exception: uri:%s exception:%s", request.getUri, e)
-          val response = request.response
-          response.status = Status.InternalServerError
-          response.clearContent()
-          Future.value(response)
-        } catch {
-          // logging or internals are broken.  Write static string to console -
-          // don't attempt to include request or exception.
-          case NonFatal(e) =>
-            Console.err.println("ExceptionFilter failed")
-            throw e
-        }
+      case NonFatal(e) =>
+        log.error(e, "uri: %s, exception: %s", request.getUri, e)
+        val response           = request.response
+        response.status        = Status.InternalServerError
+        response.contentString = Json(Map("error" -> "Internal Server Error"))
+        response.setContentTypeJson()
+        Future.value(response)
     }
 }
 

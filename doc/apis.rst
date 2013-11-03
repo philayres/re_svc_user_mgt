@@ -4,6 +4,11 @@ Common info about response
 When response body is non-empty, its Content-Type header is set to:
 application/json;charset=utf-8
 
+Success:
+
+* Status: 200 OK
+* Body: Empty or JSON data
+
 Missing param:
 
 * Status: 400 Bad Request
@@ -24,10 +29,10 @@ Failure (try to create duplicate username + auth_type pair etc.):
 * Status: 400 Bad Request
 * Body: {"error": reason}
 
-Success:
+Server error:
 
-* Status: 200 OK
-* Body: Empty or JSON data
+* Status: 500 Internal Server Error
+* Body: {"error": "Internal Server Error"}
 
 Client machine APIs
 -------------------
