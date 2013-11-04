@@ -62,12 +62,13 @@ object Credential {
   /** @return Future(Some(error)) or Future(None) */
   def create(
     requester: Requester,
-    username: String, authType: Int, password: String, validated: Boolean
+    username:    String, authType:    Int, password:    String,
+    newUsername: String, newAuthType: Int, newPassword: String
   ): Future[Option[String]] = {
     val path = Seq("credentials")
     val form = Map(
-      "username" -> username, "auth_type" -> authType, "password" -> password,
-      "validated" -> validated
+      "username"     -> username,    "auth_type"     -> authType,   "password"      -> password,
+      "new_username" -> newUsername, "new_auth_type" -> newAuthType, "new_password" -> newPassword
     )
 
     requester.post(path, form)
