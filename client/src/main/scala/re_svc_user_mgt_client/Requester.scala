@@ -21,7 +21,7 @@ class Requester(
   private val client: Service[Request, Response] = ClientBuilder()
     .codec(RichHttp[Request](Http()))
     .hosts(new InetSocketAddress(port))
-    .hostConnectionLimit(1)
+    .hostConnectionLimit(10)
     .build()
 
   def close() {

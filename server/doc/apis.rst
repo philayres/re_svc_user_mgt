@@ -156,6 +156,8 @@ Request body params:
 
 * username, auth_type, password
 
+Response body: {"user_id": userId}
+
 Create credential
 ~~~~~~~~~~~~~~~~~
 

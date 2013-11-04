@@ -5,6 +5,14 @@ import scala.util.{Try, Success, Failure}
 import org.apache.commons.codec.digest.DigestUtils
 
 object Credential {
+  /** @return Some(userId) or None */
+  def exists(username: String, authType: Int): Option[Int] = {
+    authenticateOrCheckExistence(username, authType, None) match {
+      case Left(error)   => None
+      case Right(userId) => Some(userId)
+    }
+  }
+
   /** @return Left(error) or Right(userId) */
   def authenticate(username: String, authType: Int, password: String): Either[String, Int] = {
     authenticateOrCheckExistence(username, authType, Some(password))
@@ -42,22 +50,15 @@ object Credential {
     ret
   }
 
-  def delete(username: String, authType: Int) {
+  def validate(username: String, authType: Int, validated: Boolean) {
     DB.withConnection { con =>
-      val ps = con.prepareStatement("DELETE FROM credentials WHERE username = ? AND auth_type = ?")
-      ps.setString(1, username)
-      ps.setInt   (2, authType)
+      val ps = con.prepareStatement("UPDATE credentials SET validated = ? WHERE username = ? AND auth_type = ?")
+      ps.setInt   (1, if (validated) 1 else 0)
+      ps.setString(2, username)
+      ps.setInt   (3, authType)
 
       ps.executeUpdate()
       ps.close()
-    }
-  }
-
-  /** @return Some(userId) or None if not found */
-  def exists(username: String, authType: Int): Option[Int] = {
-    authenticateOrCheckExistence(username, authType, None) match {
-      case Left(error)   => None
-      case Right(userId) => Some(userId)
     }
   }
 
@@ -77,12 +78,11 @@ object Credential {
     }
   }
 
-  def validate(username: String, authType: Int, validated: Boolean) {
+  def delete(username: String, authType: Int) {
     DB.withConnection { con =>
-      val ps = con.prepareStatement("UPDATE credentials SET validated = ? WHERE username = ? AND auth_type = ?")
-      ps.setInt   (1, if (validated) 1 else 0)
-      ps.setString(2, username)
-      ps.setInt   (3, authType)
+      val ps = con.prepareStatement("DELETE FROM credentials WHERE username = ? AND auth_type = ?")
+      ps.setString(1, username)
+      ps.setInt   (2, authType)
 
       ps.executeUpdate()
       ps.close()
