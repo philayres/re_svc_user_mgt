@@ -77,7 +77,7 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
       Some("Wrong nonce")
     } else {
       val now = System.currentTimeMillis() / 1000
-      if (timestamp > 0 && now > timestamp && (now - timestamp) < FilterNonceCheck.NONCE_TTL)
+      if (timestamp > 0 && now >= timestamp && (now - timestamp) < FilterNonceCheck.NONCE_TTL)
         None
       else
         Some("Nonce expired")
