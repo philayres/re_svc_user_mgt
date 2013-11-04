@@ -85,7 +85,7 @@ object Credential {
     requester: Requester,
     username: String, authType: Int, validated: Boolean
   ): Future[Option[String]] = {
-    val path = Seq("credentials", username, authType)
+    val path = Seq("credentials", username, authType, "validate")
     val form = Map("validated" -> validated)
 
     requester.patch(path, form)

@@ -6,7 +6,7 @@ import org.specs2.mutable._
 import Bootstrap._
 
 class CredentialCreateSpec extends Specification {
-  "enabled user, validated credential => true" in {
+  "enabled user, validated credential => OK" in {
     val username = UUID.randomUUID().toString
     val r = Await.result(
       Credential.create(requester, USERNAME, AUTH_TYPE, PASSWORD, username, 1, "p")
@@ -14,7 +14,7 @@ class CredentialCreateSpec extends Specification {
     r must beNone
   }
 
-  "enabled user, invalidated credential => false" in {
+  "enabled user, invalidated credential => NG" in {
     val username1 = UUID.randomUUID().toString
     val r1 = Await.result(
       User.create(requester, username1, 1, "p", false)
@@ -28,7 +28,7 @@ class CredentialCreateSpec extends Specification {
     r2 must beSome
   }
 
-  "disabled user, validated credential => false" in {
+  "disabled user, validated credential => NG" in {
     val username1 = UUID.randomUUID().toString
     val r1 = Await.result(
       User.create(requester, username1, 1, "p", true)
@@ -49,7 +49,7 @@ class CredentialCreateSpec extends Specification {
     r3 must beSome
   }
 
-  "disabled user, invalidated credential => false" in {
+  "disabled user, invalidated credential => NG" in {
     val username1 = UUID.randomUUID().toString
     val r1 = Await.result(
       User.create(requester, username1, 1, "p", false)
@@ -72,7 +72,7 @@ class CredentialCreateSpec extends Specification {
 
   //----------------------------------------------------------------------------
 
-  "duplicated enabled user, validated credential => false" in {
+  "duplicated enabled user, validated credential => NG" in {
     val username = UUID.randomUUID().toString
     val r1 = Await.result(
       User.create(requester, username, 1, "p", true)
@@ -85,7 +85,7 @@ class CredentialCreateSpec extends Specification {
     r2 must beSome
   }
 
-  "duplicated enabled user, invalidated credential => false" in {
+  "duplicated enabled user, invalidated credential => NG" in {
     val username = UUID.randomUUID().toString
     val r1 = Await.result(
       User.create(requester, username, 1, "p", false)
@@ -98,7 +98,7 @@ class CredentialCreateSpec extends Specification {
     r2 must beSome
   }
 
-  "duplicated disabled user, validated credential => false" in {
+  "duplicated disabled user, validated credential => NG" in {
     val username = UUID.randomUUID().toString
     val r1 = Await.result(
       User.create(requester, username, 1, "p", true)
@@ -118,7 +118,7 @@ class CredentialCreateSpec extends Specification {
     r3 must beSome
   }
 
-  "duplicated disabled user, invalidated credential => false" in {
+  "duplicated disabled user, invalidated credential => NG" in {
     val username = UUID.randomUUID().toString
     val r1 = Await.result(
       User.create(requester, username, 1, "p", false)

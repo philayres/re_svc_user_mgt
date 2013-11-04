@@ -6,7 +6,7 @@ import org.specs2.mutable._
 import Bootstrap._
 
 class CredentialExistsSpec extends Specification {
-  "enabled user, validated credential => true" in {
+  "enabled user, validated credential => OK" in {
     val username = UUID.randomUUID().toString
     val r1 = Await.result(
       User.create(requester, username, 1, "p", true)
@@ -20,7 +20,7 @@ class CredentialExistsSpec extends Specification {
     r2.right.get must beSome
   }
 
-  "enabled user, invalidated credential => false" in {
+  "enabled user, invalidated credential => NG" in {
     val username = UUID.randomUUID().toString
     val r1 = Await.result(
       User.create(requester, username, 1, "p", false)
@@ -34,7 +34,7 @@ class CredentialExistsSpec extends Specification {
     r2.right.get must beNone
   }
 
-  "disabled user, validated credential => false" in {
+  "disabled user, validated credential => NG" in {
     val username = UUID.randomUUID().toString
     val r1 = Await.result(
       User.create(requester, username, 1, "p", true)
@@ -55,7 +55,7 @@ class CredentialExistsSpec extends Specification {
     r3.right.get must beNone
   }
 
-  "disabled user, invalidated credential => false" in {
+  "disabled user, invalidated credential => NG" in {
     val username = UUID.randomUUID().toString
     val r1 = Await.result(
       User.create(requester, username, 1, "p", false)
@@ -76,7 +76,7 @@ class CredentialExistsSpec extends Specification {
     r3.right.get must beNone
   }
 
-  "nonexisting username => false" in {
+  "nonexisting username => NG" in {
     val r = Await.result(
       Credential.exists(requester, "nonexisting username", 1)
     )

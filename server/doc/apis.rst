@@ -124,7 +124,7 @@ POST /users
 Request body params:
 
 * username, auth_type, password
-* [validated: true|false], assume false
+* [validated: true | false], assume false
 
 Response body: {"user_id": userId}
 
@@ -135,7 +135,7 @@ PATCH /users/:userId/enable
 
 Request body params:
 
-* enabled: true|false
+* enabled: true | false
 
 Credential APIs
 ---------------
@@ -175,7 +175,7 @@ PATCH /credentials/:username/:authType/validate
 
 Request body params:
 
-* validated: true|false
+* validated: true | false
 
 Update password
 ~~~~~~~~~~~~~~~
