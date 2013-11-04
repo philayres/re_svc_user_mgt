@@ -19,18 +19,24 @@ class ClientMachinesCreate extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
     // User check is done at Routes
 
-    val clientName = requireParamString(request, "client_name")
-    val clientType = requireParamInt(request, "client_type")
-
     val response = request.response
-    ClientMachine.create(clientName, clientType) match {
-      case Left(error) =>
-        response.status        = Status.BadRequest
-        response.contentString = Json(Map("error" -> error))
 
-      case Right((clientId, sharedSecret)) =>
-        response.contentString = Json(Map("client_id" -> clientId, "shared_secret" -> sharedSecret))
+    val clientName = requireParamString(request, "client_name")
+    if (clientName.contains(' ')) {
+      response.status        = Status.BadRequest
+      response.contentString = Json(Map("error" -> "client_name must be printable ASCII character, containing no spaces"))
+    } else {
+      val clientType = requireParamInt(request, "client_type")
+      ClientMachine.create(clientName, clientType) match {
+        case Left(error) =>
+          response.status        = Status.BadRequest
+          response.contentString = Json(Map("error" -> error))
+
+        case Right((clientId, sharedSecret)) =>
+          response.contentString = Json(Map("client_id" -> clientId, "shared_secret" -> sharedSecret))
+      }
     }
+
     response.setContentTypeJson()
     Future.value(response)
   }

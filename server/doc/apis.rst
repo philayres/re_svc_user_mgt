@@ -10,6 +10,8 @@ For all requests, client must send this Authorization header:
 
  <nonce> <client name> <timestamp in seconds>
 
+Client names must be printable ASCII character, containing no spaces.
+
 Creating nonce
 ~~~~~~~~~~~~~~
 
@@ -101,6 +103,8 @@ Request body params:
 
 * username, auth_type, password (must be admin)
 * client_name, client_type
+
+client_name must be printable ASCII character, containing no spaces.
 
 Reseponse body: {"client_id": clientId, "shared_secret": sharedSecret}
 
