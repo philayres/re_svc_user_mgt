@@ -13,7 +13,7 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, HttpMethod}
 import org.jboss.netty.util.CharsetUtil
 
 class Requester(
-  clientId: Int, sharedSecret: String,
+  clientName: String, sharedSecret: String,
   https: Boolean, host: String, port: Int
 ) {
   private val protocol = if (https) "https" else "http"
@@ -72,7 +72,7 @@ class Requester(
     val path      = request.getUri
     val content   = request.getContent.toString(CharsetUtil.UTF_8)  // Empty string (not null) if the content is empty
     val timestamp = System.currentTimeMillis() / 1000
-    val nonce     = DigestUtils.sha256Hex(method + path + content + clientId + sharedSecret + timestamp)
-    request.addHeader(AUTHORIZATION, s"$nonce $clientId $timestamp")
+    val nonce     = DigestUtils.sha256Hex(method + path + content + clientName + sharedSecret + timestamp)
+    request.addHeader(AUTHORIZATION, s"$nonce $clientName $timestamp")
   }
 }

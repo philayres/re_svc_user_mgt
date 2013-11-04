@@ -1,21 +1,21 @@
 Nonce check
 -----------
 
-Each client has its own client ID and shared secret (the server knows the pair
-client ID and shared secret).
+Each client has its own unique client name and shared secret (the server knows
+client name and shared secret pairs).
 
 For all requests, client must send this Authorization header:
 
 ::
 
- <nonce> <client ID> <timestamp in seconds>
+ <nonce> <client name> <timestamp in seconds>
 
 Creating nonce
 ~~~~~~~~~~~~~~
 
 ::
 
-  nonce = sha256Hex(method + path + content + clientId + sharedSecret + timestamp)
+  nonce = sha256Hex(method + path + content + clientName + sharedSecret + timestamp)
 
 For requests that does not contain body content (e.g. GET), ``content`` is empty
 string.
@@ -36,7 +36,7 @@ It creates this nonce:
     "POST" +
     "/client_machines?foo=1&bar=2" +
     "username=opadmin&auth_type=999&client_name=c1&client_type=1&password=test123%21" +
-    clientId +
+    clientName +
     sharedSecret +
     timestamp
   )
@@ -46,7 +46,7 @@ The full request will look like this:
 ::
 
   POST /client_machines?foo=1&bar=2 HTTP/1.1
-  Authorization: <nonce> <clientId> <timestamp>
+  Authorization: <nonce> <clientName> <timestamp>
   Host: localhost:8000
   Content-Type: application/x-www-form-urlencoded
   Content-Length: 79

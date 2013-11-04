@@ -5,7 +5,7 @@ object Client {
   private val HOST  = "localhost"
   private val PORT  = 8000
 
-  private val CLIENT_ID     = 1
+  private val CLIENT_NAME   = "opclient1"
   private val SHARED_SECRET = "test123!"
 
   private val USERNAME  = "opadmin"
@@ -13,7 +13,7 @@ object Client {
   private val PASSWORD  = "test123!"
 
   def main(args: Array[String]) {
-    val requester = new Requester(CLIENT_ID, SHARED_SECRET, HTTPS, HOST, PORT)
+    val requester = new Requester(CLIENT_NAME, SHARED_SECRET, HTTPS, HOST, PORT)
 
     val clientName = "c1"
     val clientType = 1

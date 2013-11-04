@@ -17,17 +17,18 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
   def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
     request.headers.get(AUTHORIZATION) match {
       case None =>
-        respondError(request, "No Authorization header (<nonce> <client ID> <timestamp in seconds>)")
+        respondError(request, "No Authorization header (<nonce> <client name> <timestamp in seconds>)")
 
       case Some(header) =>
         val array = header.split(' ')
         if (array.length != 3) {
-          respondError(request, "Authorization header must be <nonce> <client ID> <timestamp in seconds>")
+          respondError(request, "Authorization header must be <nonce> <client name> <timestamp in seconds>")
         } else {
-          Try((array(1).toInt, array(2).toInt)) match {
-            case Success((clientId, timestamp)) =>
-              val nonce = array(0)
-              checkNonce(request, nonce, clientId, timestamp) match {
+          Try((array(2).toInt)) match {
+            case Success(timestamp) =>
+              val nonce      = array(0)
+              val clientName = array(1)
+              checkNonce(request, nonce, clientName, timestamp) match {
                 case Some(error) =>
                   respondError(request, error)
 
@@ -36,7 +37,7 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
               }
 
             case _ =>
-              respondError(request, "Client ID and timestamp [ms] in Authorization header must be integer numbers")
+              respondError(request, "Authorization header must be <nonce> <client name> <timestamp in seconds>")
           }
         }
     }
@@ -56,23 +57,23 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
   }
 
   /** @return Some(error) or None */
-  private def checkNonce(request: Request, nonce: String, clientId: Int, timestamp: Int): Option[String] = {
-    ClientMachine.getSharedSecret(clientId) match {
+  private def checkNonce(request: Request, nonce: String, clientName: String, timestamp: Int): Option[String] = {
+    ClientMachine.getSharedSecret(clientName) match {
       case None =>
         Some("Client not found")
 
       case Some(sharedSecret) =>
-        checkNonce(request, nonce, clientId, timestamp, sharedSecret)
+        checkNonce(request, nonce, clientName, timestamp, sharedSecret)
     }
   }
 
   /** @return Some(error) or None */
-  private def checkNonce(request: Request, nonce: String, clientId: Int, timestamp: Int, sharedSecret: String): Option[String] = {
+  private def checkNonce(request: Request, nonce: String, clientName: String, timestamp: Int, sharedSecret: String): Option[String] = {
     val method  = request.method
     val path    = request.uri
     val content = request.contentString  // Empty string (not null) if the content is empty
 
-    val recreatedNonce = DigestUtils.sha256Hex(method + path + content + clientId + sharedSecret + timestamp)
+    val recreatedNonce = DigestUtils.sha256Hex(method + path + content + clientName + sharedSecret + timestamp)
     if (recreatedNonce != nonce) {
       Some("Wrong nonce")
     } else {

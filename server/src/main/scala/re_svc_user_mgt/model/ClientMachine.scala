@@ -5,10 +5,10 @@ import scala.util.Try
 
 object ClientMachine {
   /** @return Some(sharedSecret) or None */
-  def getSharedSecret(clientId: Int): Option[String] = {
+  def getSharedSecret(clientName: String): Option[String] = {
     DB.withConnection { con =>
-      val ps = con.prepareStatement("SELECT shared_secret FROM clients WHERE id = ?")
-      ps.setInt(1, clientId)
+      val ps = con.prepareStatement("SELECT shared_secret FROM clients WHERE name = ?")
+      ps.setString(1, clientName)
 
       val rs  = ps.executeQuery()
       val ret = if (rs.next()) Some(rs.getString("shared_secret")) else None
