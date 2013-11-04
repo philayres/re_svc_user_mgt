@@ -6,11 +6,10 @@ import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
 
-import org.apache.commons.codec.digest.DigestUtils
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names.AUTHORIZATION
 
 import re_svc_user_mgt.Config.log
-import re_svc_user_mgt.model.ClientMachine
+import re_svc_user_mgt.model.Nonce
 
 /** Idea: http://tyleregeto.com/article/a-guide-to-nonce */
 class FilterNonceCheck extends SimpleFilter[Request, Response] {
@@ -28,12 +27,14 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
             case Success(timestamp) =>
               val nonce      = array(0)
               val clientName = array(1)
-              checkNonce(request, nonce, clientName, timestamp) match {
-                case Some(error) =>
-                  respondError(request, error)
 
-                case None =>
-                  service(request)
+              val method  = request.method.toString
+              val path    = request.uri
+              val content = request.contentString  // Empty string (not null) if the content is empty
+
+              Nonce.check(method, path, content, nonce, clientName, timestamp) match {
+                case Some(error) => respondError(request, error)
+                case None        => service(request)
               }
 
             case _ =>
@@ -55,37 +56,6 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
     response.setContentTypeJson()
     Future.value(response)
   }
-
-  /** @return Some(error) or None */
-  private def checkNonce(request: Request, nonce: String, clientName: String, timestamp: Int): Option[String] = {
-    ClientMachine.getSharedSecret(clientName) match {
-      case None =>
-        Some("Client not found")
-
-      case Some(sharedSecret) =>
-        checkNonce(request, nonce, clientName, timestamp, sharedSecret)
-    }
-  }
-
-  /** @return Some(error) or None */
-  private def checkNonce(request: Request, nonce: String, clientName: String, timestamp: Int, sharedSecret: String): Option[String] = {
-    val method  = request.method
-    val path    = request.uri
-    val content = request.contentString  // Empty string (not null) if the content is empty
-
-    val recreatedNonce = DigestUtils.sha256Hex(method + path + content + clientName + sharedSecret + timestamp)
-    if (recreatedNonce != nonce) {
-      Some("Wrong nonce")
-    } else {
-      val now = System.currentTimeMillis() / 1000
-      if (timestamp > 0 && now >= timestamp && (now - timestamp) < FilterNonceCheck.NONCE_TTL)
-        None
-      else
-        Some("Nonce expired")
-    }
-  }
 }
 
-object FilterNonceCheck extends FilterNonceCheck {
-  val NONCE_TTL = 1 * 60  // 1 minute
-}
+object FilterNonceCheck extends FilterNonceCheck

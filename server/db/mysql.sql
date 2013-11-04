@@ -33,7 +33,7 @@ CREATE TABLE clients(
   shared_secret VARCHAR(255) NOT NULL,
 
   PRIMARY KEY (id),
-  UNIQUE KEY index_name (name(255))
+  UNIQUE KEY index_name (name(255))  /* Select by client name */
 ) ENGINE=InnoDB;
 
 CREATE TABLE users(
@@ -61,7 +61,7 @@ CREATE TABLE credentials(
 
   PRIMARY KEY (id),
   KEY index_user_id (user_id),
-  UNIQUE KEY index_username_auth_type (username(255), auth_type),
+  UNIQUE KEY index_username_auth_type (username(255), auth_type),  /* Select by username and auth_type */
   FOREIGN KEY (user_id) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
@@ -79,7 +79,19 @@ CREATE TABLE admins(
 
 /* Log tables ----------------------------------------------------------------*/
 
-/* TODO */
+/*
+Make sure that nonce is not reused to avoid replay attack.
+Periodically, expired nonces (TTL is 1 minute) are deleted.
+*/
+CREATE TABLE nonces(
+  nonce VARCHAR(64) NOT NULL,
+  created_at INT NOT NULL,
+
+  PRIMARY KEY (nonce),
+  KEY index_created_at (created_at)  /* Delete expired nonces faster */
+) ENGINE=InnoDB;
+
+/* TODO: https://github.com/philayres/re_svc_user_mgt/issues/14 */
 
 /* Bootstrap data ------------------------------------------------------------*/
 
