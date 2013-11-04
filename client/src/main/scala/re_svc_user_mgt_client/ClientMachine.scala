@@ -46,7 +46,7 @@ object ClientMachine {
     val path = Seq("client_machines", clientName)
     val form = Map("username" -> username, "auth_type" -> authType, "password" -> password)
 
-    requester.post(path, form)
+    requester.delete(path, form)
     .map { res =>
       res.statusCode match {
         case 200 => None
