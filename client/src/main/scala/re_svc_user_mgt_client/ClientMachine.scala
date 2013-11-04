@@ -6,7 +6,7 @@ import org.json4s._
 import org.json4s.native.JsonMethods._
 
 object ClientMachine {
-  /** @return Left(error) or Right((clientId, sharedSecret)) */
+  /** @return Future(Left(error)) or Future(Right((clientId, sharedSecret))) */
   def create(
     requester: Requester,
     username: String, authType: Int, password: String,
