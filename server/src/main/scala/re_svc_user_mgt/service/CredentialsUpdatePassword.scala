@@ -24,7 +24,8 @@ class CredentialsUpdatePassword(username: String, authType: Int) extends Service
     if (forceNew) {
       Credential.updatePassword(username, authType, newPassword)
     } else {
-      if (FilterRequireCredential.checkUser(request))
+      val password = requireParamString(request, "password")
+      if (FilterRequireCredential.checkUser(request, username, authType, password))
         Credential.updatePassword(username, authType, newPassword)
     }
     Future.value(request.response)

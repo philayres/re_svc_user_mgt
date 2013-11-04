@@ -36,7 +36,10 @@ object FilterRequireCredential extends FilterRequireCredential {
     val username = requireParamString(request, "username")
     val authType = requireParamInt(request, "auth_type")
     val password = requireParamString(request, "password")
+    checkUser(request, username, authType, password)
+  }
 
+  def checkUser(request: Request, username: String, authType: Int, password: String): Boolean = {
     Credential.authenticate(username, authType, password) match {
       case Left(error) =>
         val response           = request.response

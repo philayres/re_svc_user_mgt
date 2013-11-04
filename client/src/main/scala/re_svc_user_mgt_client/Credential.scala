@@ -118,8 +118,8 @@ object Credential {
   ): Future[Option[String]] = {
     val path = Seq("credentials", username, authType, "update_password")
     val form = passwordo match {
-      case None           => Map("force_new" -> true)
-      case Some(password) => Map("password"  -> password)
+      case None           => Map("new_password" -> newPassword, "force_new" -> true)
+      case Some(password) => Map("new_password" -> newPassword, "password"  -> password)
     }
 
     requester.patch(path, form)
