@@ -1,10 +1,23 @@
 package re_svc_user_mgt_client
 
 object Client {
-  def main(args: Array[String]) {
-    val requester = new Requester(1, "test123!", false, "localhost", 8000)
+  private val HTTPS = false
+  private val HOST  = "localhost"
+  private val PORT  = 8000
 
-    ClientMachine.create(requester, "opadmin", 999, "test123!", "c1", 1)
+  private val CLIENT_ID     = 1
+  private val SHARED_SECRET = "test123!"
+
+  private val USERNAME  = "opadmin"
+  private val AUTH_TYPE = 999
+  private val PASSWORD  = "test123!"
+
+  def main(args: Array[String]) {
+    val requester = new Requester(CLIENT_ID, SHARED_SECRET, HTTPS, HOST, PORT)
+
+    val clientName = "c1"
+    val clientType = 1
+    ClientMachine.create(requester, USERNAME, AUTH_TYPE, PASSWORD, clientName, clientType)
     .onSuccess {
       case Left(error) =>
         println(s"[ClientMachine.create] error: $error")
