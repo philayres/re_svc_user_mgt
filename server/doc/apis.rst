@@ -8,7 +8,7 @@ For all requests, client must send this Authorization header:
 
 ::
 
- <nonce> <client ID> <milisecond timestamp>
+ <nonce> <client ID> <timestamp in seconds>
 
 Creating nonce
 ~~~~~~~~~~~~~~
@@ -24,13 +24,13 @@ For example, when the client wants to send this:
 
 * Method: POST
 * Path: /client_machines?foo=1&bar=2
-* Content (POST body): username=opadmin&auth_type=999&client_name=c1&client_type=1&password=test123%21
+* Content (POST body): username=opadmin&auth_type=999&password=test123%21&client_name=c1&client_type=1
 
 It creates this nonce:
 
 ::
 
-  timestamp = <current time in miliseconds>
+  timestamp = <current time in seconds>
 
   nonce = sha256Hex(
     "POST" +

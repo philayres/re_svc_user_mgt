@@ -17,14 +17,14 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
   def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
     request.headers.get(AUTHORIZATION) match {
       case None =>
-        respondError(request, "No Authorization header (<nonce> <client ID> <milisecond timestamp>)")
+        respondError(request, "No Authorization header (<nonce> <client ID> <timestamp in seconds>)")
 
       case Some(header) =>
         val array = header.split(' ')
         if (array.length != 3) {
-          respondError(request, "Authorization header must be <nonce> <client ID> <milisecond timestamp>")
+          respondError(request, "Authorization header must be <nonce> <client ID> <timestamp in seconds>")
         } else {
-          Try((array(1).toInt, array(2).toLong)) match {
+          Try((array(1).toInt, array(2).toInt)) match {
             case Success((clientId, timestamp)) =>
               val nonce = array(0)
               checkNonce(request, nonce, clientId, timestamp) match {
@@ -56,7 +56,7 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
   }
 
   /** @return Some(error) or None */
-  private def checkNonce(request: Request, nonce: String, clientId: Int, timestamp: Long): Option[String] = {
+  private def checkNonce(request: Request, nonce: String, clientId: Int, timestamp: Int): Option[String] = {
     ClientMachine.getSharedSecret(clientId) match {
       case None =>
         Some("Client not found")
@@ -67,7 +67,7 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
   }
 
   /** @return Some(error) or None */
-  private def checkNonce(request: Request, nonce: String, clientId: Int, timestamp: Long, sharedSecret: String): Option[String] = {
+  private def checkNonce(request: Request, nonce: String, clientId: Int, timestamp: Int, sharedSecret: String): Option[String] = {
     val method  = request.method
     val path    = request.uri
     val content = request.contentString  // Empty string (not null) if the content is empty
@@ -76,7 +76,7 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
     if (recreatedNonce != nonce) {
       Some("Wrong nonce")
     } else {
-      val now = System.currentTimeMillis()
+      val now = System.currentTimeMillis() / 1000
       if (timestamp > 0 && now > timestamp && (now - timestamp) < FilterNonceCheck.NONCE_TTL)
         None
       else
@@ -86,5 +86,5 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
 }
 
 object FilterNonceCheck extends FilterNonceCheck {
-  val NONCE_TTL = 1 * 60 * 1000L  // 1 minute
+  val NONCE_TTL = 1 * 60  // 1 minute
 }
