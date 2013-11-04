@@ -42,7 +42,7 @@ object User {
 
   /** @return Future(Some(error)) or Future(None) */
   def enable(requester: Requester, userId: Int, enabled: Boolean): Future[Option[String]] = {
-    val path = Seq("users", userId)
+    val path = Seq("users", userId, "enable")
     val form = Map("enabled" -> enabled)
 
     requester.patch(path, form)
