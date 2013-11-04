@@ -11,8 +11,8 @@ import re_svc_user_mgt.model.Credential
  * Make sure that the user is a valid user (but not necessarily an admin).
  * On success, the user ID will be set to the request header.
  */
-class FilterRequireCredential[REQUEST <: Request] extends SimpleFilter[REQUEST, Response] {
-  def apply(request: REQUEST, service: Service[REQUEST, Response]): Future[Response] = {
+class FilterRequireCredential extends SimpleFilter[Request, Response] {
+  def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
     if (FilterRequireCredential.checkUser(request))
       service(request)
     else
@@ -20,7 +20,7 @@ class FilterRequireCredential[REQUEST <: Request] extends SimpleFilter[REQUEST, 
   }
 }
 
-object FilterRequireCredential extends FilterRequireCredential[Request] {
+object FilterRequireCredential extends FilterRequireCredential {
   private val REQUEST_HEADER_USER_ID = "X_USER_ID"
 
   /**

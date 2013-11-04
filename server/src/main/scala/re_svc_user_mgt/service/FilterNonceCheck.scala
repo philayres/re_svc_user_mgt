@@ -13,8 +13,8 @@ import re_svc_user_mgt.Config.log
 import re_svc_user_mgt.model.ClientMachine
 
 /** Idea: http://tyleregeto.com/article/a-guide-to-nonce */
-class FilterNonceCheck[REQUEST <: Request] extends SimpleFilter[REQUEST, Response] {
-  def apply(request: REQUEST, service: Service[REQUEST, Response]): Future[Response] = {
+class FilterNonceCheck extends SimpleFilter[Request, Response] {
+  def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
     request.headers.get(AUTHORIZATION) match {
       case None =>
         respondError(request, "No Authorization header (<nonce> <client ID> <milisecond timestamp>)")
@@ -44,7 +44,7 @@ class FilterNonceCheck[REQUEST <: Request] extends SimpleFilter[REQUEST, Respons
 
   //----------------------------------------------------------------------------
 
-  private def respondError(request: REQUEST, error: String): Future[Response] = {
+  private def respondError(request: Request, error: String): Future[Response] = {
     val msg = s"Nonce check failed ($error)"
     log.warning(msg + ": " + request.toString)
 
@@ -85,6 +85,6 @@ class FilterNonceCheck[REQUEST <: Request] extends SimpleFilter[REQUEST, Respons
   }
 }
 
-object FilterNonceCheck extends FilterNonceCheck[Request] {
+object FilterNonceCheck extends FilterNonceCheck {
   val NONCE_TTL = 1 * 60 * 1000L  // 1 minute
 }

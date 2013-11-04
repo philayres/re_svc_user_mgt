@@ -15,12 +15,12 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus
  * https://github.com/philayres/re_svc_user_mgt/issues/16 Return 400 Bad Request instead of 500 response when required param is missing
  * https://github.com/twitter/finagle/blob/master/finagle-http/src/main/scala/com/twitter/finagle/http/filter/ExceptionFilter.scala
  */
-class FilterException[REQUEST <: Request] extends SimpleFilter[REQUEST, Response] {
+class FilterException extends SimpleFilter[Request, Response] {
   import FilterException.ClientClosedRequestStatus
 
   private val log = Logger("finagle-http")
 
-  def apply(request: REQUEST, service: Service[REQUEST, Response]): Future[Response] =
+  def apply(request: Request, service: Service[Request, Response]): Future[Response] =
     {
       try {
         service(request)
@@ -54,7 +54,7 @@ class FilterException[REQUEST <: Request] extends SimpleFilter[REQUEST, Response
     }
 }
 
-object FilterException extends FilterException[Request] {
+object FilterException extends FilterException {
   private[FilterException] val ClientClosedRequestStatus =
     new HttpResponseStatus(499, "Client Closed Request")
 }

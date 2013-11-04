@@ -10,8 +10,8 @@ import re_svc_user_mgt.model.{Credential, User}
  * Must be put behind FilterRequireCredential.
  * Verify userId, make sure that the user is an admin.
  */
-class FilterRequireAdmin[REQUEST <: Request] extends SimpleFilter[REQUEST, Response] {
-  def apply(request: REQUEST, service: Service[REQUEST, Response]): Future[Response] = {
+class FilterRequireAdmin extends SimpleFilter[Request, Response] {
+  def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
     val userId = FilterRequireCredential.getUserId(request)
     if (User.isAdmin(userId)) {
       service(request)
@@ -25,4 +25,4 @@ class FilterRequireAdmin[REQUEST <: Request] extends SimpleFilter[REQUEST, Respo
   }
 }
 
-object FilterRequireAdmin extends FilterRequireAdmin[Request]
+object FilterRequireAdmin extends FilterRequireAdmin
