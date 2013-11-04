@@ -6,7 +6,7 @@ import org.json4s._
 import org.json4s.native.JsonMethods._
 
 object Credential {
-    /** @return Future(Right(Some(userId))), Future(Right(None)), or Future(Left(error)) */
+  /** @return Future(Right(Some(userId))), Future(Right(None)), or Future(Left(error)) */
   def exists(requester: Requester, username: String, authType: Int): Future[Either[String, Option[Int]]] = {
     val path = Seq("credentials", username, authType)
 
