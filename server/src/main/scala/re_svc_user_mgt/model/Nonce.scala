@@ -1,9 +1,19 @@
 package re_svc_user_mgt.model
 
+import com.twitter.finagle.util.DefaultTimer
+import com.twitter.util.Duration
+
 import org.apache.commons.codec.digest.DigestUtils
 
 object Nonce {
   private val NONCE_TTL = 1 * 60 * 1000  // 1 minute
+
+  def schedulePeriodicallyDeleteExpiredNonces() {
+    val period = Duration.fromMilliseconds(10 * NONCE_TTL)
+    DefaultTimer.twitter.schedule(period) {
+      deleteExpiredNonces()
+    }
+  }
 
   /** @return Some(error) or None */
   def check(
@@ -23,10 +33,6 @@ object Nonce {
           check(method, path, content, nonce, clientName, timestamp, now, sharedSecret)
       }
     }
-  }
-
-  private def deleteExpiredNonces() {
-
   }
 
   //----------------------------------------------------------------------------
@@ -85,6 +91,17 @@ object Nonce {
     DB.withConnection { con =>
       val ps = con.prepareStatement("DELETE FROM nonces WHERE nonce = ?")
       ps.setString(1, nonce)
+      ps.executeUpdate()
+      ps.close()
+    }
+  }
+
+  private def deleteExpiredNonces() {
+    DB.withConnection { con =>
+      val now       = System.currentTimeMillis()
+      val threshold = now - NONCE_TTL
+      val ps = con.prepareStatement("DELETE FROM nonces WHERE created_at < ?")
+      ps.setLong(1, threshold)
       ps.executeUpdate()
       ps.close()
     }
