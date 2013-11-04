@@ -5,7 +5,7 @@ import com.twitter.util.Await
 import org.specs2.mutable._
 import Bootstrap._
 
-class CredentialExistsSpec extends Specification {
+class CredentialAuthenticateSpec extends Specification {
   "enabled user, validated credential => true" in {
     val username = UUID.randomUUID().toString
     val r1 = Await.result(
@@ -14,10 +14,9 @@ class CredentialExistsSpec extends Specification {
     r1 must beRight
 
     val r2 = Await.result(
-      Credential.exists(requester, username, 1)
+      Credential.authenticate(requester, username, 1, "p")
     )
     r2 must beRight
-    r2.right.get must beSome
   }
 
   "enabled user, invalidated credential => false" in {
@@ -28,10 +27,9 @@ class CredentialExistsSpec extends Specification {
     r1 must beRight
 
     val r2 = Await.result(
-      Credential.exists(requester, username, 1)
+      Credential.authenticate(requester, username, 1, "p")
     )
-    r2 must beRight
-    r2.right.get must beNone
+    r2 must beLeft
   }
 
   "disabled user, validated credential => false" in {
@@ -49,10 +47,9 @@ class CredentialExistsSpec extends Specification {
     r2 must beNone
 
     val r3 = Await.result(
-      Credential.exists(requester, username, 1)
+      Credential.authenticate(requester, username, 1, "p")
     )
-    r3 must beRight
-    r3.right.get must beNone
+    r3 must beLeft
   }
 
   "disabled user, invalidated credential => false" in {
@@ -70,17 +67,15 @@ class CredentialExistsSpec extends Specification {
     r2 must beNone
 
     val r3 = Await.result(
-      Credential.exists(requester, username, 1)
+      Credential.authenticate(requester, username, 1, "p")
     )
-    r3 must beRight
-    r3.right.get must beNone
+    r3 must beLeft
   }
 
   "nonexisting username => false" in {
     val r = Await.result(
-      Credential.exists(requester, "nonexisting username", 1)
+      Credential.authenticate(requester, "nonexisting username", 1, "p")
     )
-    r must beRight
-    r.right.get must beNone
+    r must beLeft
   }
 }
