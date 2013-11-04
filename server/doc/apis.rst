@@ -8,7 +8,7 @@ For all requests, client must send this Authorization header:
 
 ::
 
- <nonce> <client name> <timestamp in seconds>
+ <nonce> <client name> <timestamp in miliseconds>
 
 Client names must be printable ASCII character, containing no spaces.
 
@@ -32,7 +32,7 @@ It creates this nonce:
 
 ::
 
-  timestamp = <current time in seconds>
+  timestamp = <current time in miliseconds>
 
   nonce = sha256Hex(
     "POST" +

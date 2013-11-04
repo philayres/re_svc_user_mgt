@@ -85,7 +85,7 @@ Periodically, expired nonces (TTL is 1 minute) are deleted.
 */
 CREATE TABLE nonces(
   nonce VARCHAR(64) NOT NULL,
-  created_at INT NOT NULL,
+  created_at BIGINT NOT NULL,  /* Need to milisecond precision, TIMESTAMP/INT: second precision */
 
   PRIMARY KEY (nonce),
   KEY index_created_at (created_at)  /* Delete expired nonces faster */

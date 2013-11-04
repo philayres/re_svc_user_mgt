@@ -3,16 +3,16 @@ package re_svc_user_mgt.model
 import org.apache.commons.codec.digest.DigestUtils
 
 object Nonce {
-  private val NONCE_TTL = 1 * 60  // 1 minute
+  private val NONCE_TTL = 1 * 60 * 1000  // 1 minute
 
   /** @return Some(error) or None */
   def check(
     method: String, path: String, content: String,
-    nonce: String, clientName: String, timestamp: Int
+    nonce: String, clientName: String, timestamp: Long
   ): Option[String] = {
     // Use abs because time on different systems can be slightly different
-    val nowSecs = (System.currentTimeMillis() / 1000).toInt
-    if (timestamp < 0 || Math.abs(nowSecs - timestamp) > NONCE_TTL) {
+    val now = System.currentTimeMillis()
+    if (timestamp < 0 || Math.abs(now - timestamp) > NONCE_TTL) {
       Some("Nonce expired")
     } else {
       ClientMachine.getSharedSecret(clientName) match {
@@ -20,7 +20,7 @@ object Nonce {
           Some("Client not found")
 
         case Some(sharedSecret) =>
-          check(method, path, content, nonce, clientName, timestamp, nowSecs, sharedSecret)
+          check(method, path, content, nonce, clientName, timestamp, now, sharedSecret)
       }
     }
   }
@@ -34,12 +34,12 @@ object Nonce {
   /** @return Some(error) or None */
   private def check(
     method: String, path: String, content: String,
-    nonce: String, clientName: String, timestamp: Int, nowSecs: Int, sharedSecret: String
+    nonce: String, clientName: String, timestamp: Long, now: Long, sharedSecret: String
   ): Option[String] = {
     val recreatedNonce = DigestUtils.sha256Hex(method + path + content + clientName + sharedSecret + timestamp)
     if (recreatedNonce != nonce) {
       Some("Wrong nonce")
-    } else if (isUsed(nonce, nowSecs)) {
+    } else if (isUsed(nonce, now)) {
       Some("Nonce has been used")
     } else {
       save(nonce, timestamp)
@@ -47,17 +47,17 @@ object Nonce {
     }
   }
 
-  private def isUsed(nonce: String, nowSecs: Int): Boolean = {
+  private def isUsed(nonce: String, now: Long): Boolean = {
     DB.withConnection { con =>
       val ps = con.prepareStatement("SELECT created_at FROM nonces WHERE nonce = ?")
       ps.setString(1, nonce)
 
       val rs  = ps.executeQuery()
       if (rs.next()) {
-        val secs = rs.getInt("created_at")
+        val createdAt = rs.getInt("created_at")
 
         // Use abs because time on different systems can be slightly different
-        if (Math.abs(nowSecs - secs) > NONCE_TTL) {
+        if (Math.abs(now - createdAt) > NONCE_TTL) {
           delete(nonce)
           false
         } else {
@@ -71,11 +71,11 @@ object Nonce {
     }
   }
 
-  private def save(nonce: String, timestamp: Int) {
+  private def save(nonce: String, timestamp: Long) {
     DB.withConnection { con =>
       val ps = con.prepareStatement("INSERT INTO nonces(nonce, created_at) VALUES (?, ?)")
       ps.setString(1, nonce)
-      ps.setInt   (2, timestamp)
+      ps.setLong  (2, timestamp)
       ps.executeUpdate()
       ps.close()
     }

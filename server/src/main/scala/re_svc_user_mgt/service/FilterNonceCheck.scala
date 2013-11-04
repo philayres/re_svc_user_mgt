@@ -16,14 +16,14 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
   def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
     request.headers.get(AUTHORIZATION) match {
       case None =>
-        respondError(request, "No Authorization header (<nonce> <client name> <timestamp in seconds>)")
+        respondError(request, "No Authorization header (<nonce> <client name> <timestamp in miliseconds>)")
 
       case Some(header) =>
         val array = header.split(' ')
         if (array.length != 3) {
-          respondError(request, "Authorization header must be <nonce> <client name> <timestamp in seconds>")
+          respondError(request, "Authorization header must be <nonce> <client name> <timestamp in miliseconds>")
         } else {
-          Try((array(2).toInt)) match {
+          Try((array(2).toLong)) match {
             case Success(timestamp) =>
               val nonce      = array(0)
               val clientName = array(1)
@@ -38,7 +38,7 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
               }
 
             case _ =>
-              respondError(request, "Authorization header must be <nonce> <client name> <timestamp in seconds>")
+              respondError(request, "Authorization header must be <nonce> <client name> <timestamp in miliseconds>")
           }
         }
     }
