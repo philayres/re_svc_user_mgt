@@ -17,7 +17,7 @@ Creating nonce
 
 ::
 
-  nonce = sha256Hex(method + path + content + clientName + sharedSecret + timestamp)
+  nonce = sha256_hex(method + path + content + client_name + shared_secret + timestamp)
 
 For requests that does not contain body content (e.g. GET), ``content`` is empty
 string.
@@ -38,8 +38,8 @@ It creates this nonce:
     "POST" +
     "/client_machines?foo=1&bar=2" +
     "username=opadmin&auth_type=999&client_name=c1&client_type=1&password=test123%21" +
-    clientName +
-    sharedSecret +
+    client_name +
+    shared_secret +
     timestamp
   )
 
@@ -48,7 +48,7 @@ The full request will look like this:
 ::
 
   POST /client_machines?foo=1&bar=2 HTTP/1.1
-  Authorization: <nonce> <clientName> <timestamp>
+  Authorization: <nonce> <client_name> <timestamp>
   Host: localhost:8000
   Content-Type: application/x-www-form-urlencoded
   Content-Length: 79
@@ -106,12 +106,12 @@ Request body params:
 
 client_name must be printable ASCII character, containing no spaces.
 
-Reseponse body: {"client_id": clientId, "shared_secret": sharedSecret}
+Reseponse body: {"client_id": client_id, "shared_secret": shared_secret}
 
 Delete client machine
 ~~~~~~~~~~~~~~~~~~~~~
 
-DELETE /client_machines/:clientName
+DELETE /client_machines/:client_name
 
 Request body params:
 
@@ -130,12 +130,12 @@ Request body params:
 * username, auth_type, password
 * [validated: true | false], assume false
 
-Response body: {"user_id": userId}
+Response body: {"user_id": user_id}
 
 Enable/disable user
 ~~~~~~~~~~~~~~~~~~~
 
-PATCH /users/:userId/enable
+PATCH /users/:user_id/enable
 
 Request body params:
 
@@ -147,9 +147,9 @@ Credential APIs
 Check existence
 ~~~~~~~~~~~~~~~
 
-GET /credentials/:username/:authType
+GET /credentials/:username/:auth_type
 
-Response body: {"user_id": userId}
+Response body: {"user_id": user_id}
 
 Authenticate
 ~~~~~~~~~~~~
@@ -160,7 +160,7 @@ Request body params:
 
 * username, auth_type, password
 
-Response body: {"user_id": userId}
+Response body: {"user_id": user_id}
 
 Create credential
 ~~~~~~~~~~~~~~~~~
@@ -175,7 +175,7 @@ Request body params:
 Validate/Invalidate
 ~~~~~~~~~~~~~~~~~~~
 
-PATCH /credentials/:username/:authType/validate
+PATCH /credentials/:username/:auth_type/validate
 
 Request body params:
 
@@ -184,7 +184,7 @@ Request body params:
 Update password
 ~~~~~~~~~~~~~~~
 
-PATCH /credentials/:username/:authType/update_password
+PATCH /credentials/:username/:auth_type/update_password
 
 Request body params:
 
@@ -194,4 +194,4 @@ Request body params:
 Delete credential
 ~~~~~~~~~~~~~~~~~
 
-DELETE /credentials/:username/:authType
+DELETE /credentials/:username/:auth_type
