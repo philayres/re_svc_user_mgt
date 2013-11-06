@@ -11,7 +11,7 @@ class UserEnableSpec extends Specification {
 
   "not enable nonexisting user" in {
     val r2 = Await.result(
-      User.enable(requester, -1, true)
+      User.enable(requester, -1)
     )
     r2 must beSome
   }
@@ -27,7 +27,7 @@ class UserEnableSpec extends Specification {
       val userId = r1.right.get
 
       val r2 = Await.result(
-        User.enable(requester, userId, true)
+        User.enable(requester, userId)
       )
       r2 must beNone
 

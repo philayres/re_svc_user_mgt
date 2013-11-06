@@ -42,7 +42,7 @@ object User {
     }
   }
 
-  def enable(userId: Int, enabled: Boolean) {
+  def setEnabled(userId: Int, enabled: Boolean) {
     DB.withConnection { con =>
       val ps = con.prepareStatement("UPDATE users SET enabled = ? WHERE id = ?")
       ps.setInt(1, if (enabled) 1 else 0)

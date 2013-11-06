@@ -132,14 +132,15 @@ Request body params:
 
 Response body: {"user_id": user_id}
 
-Enable/disable user
-~~~~~~~~~~~~~~~~~~~
+Enable user
+~~~~~~~~~~~
 
 PATCH /users/:user_id/enable
 
-Request body params:
+Disable user
+~~~~~~~~~~~~
 
-* enabled: true | false
+PATCH /users/:user_id/disable
 
 Credential APIs
 ---------------

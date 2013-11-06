@@ -40,12 +40,18 @@ object User {
     }
   }
 
-  /** @return Future(Some(error)) or Future(None) */
-  def enable(requester: Requester, userId: Int, enabled: Boolean): Future[Option[String]] = {
-    val path = Seq("users", userId, "enable")
-    val form = Map("enabled" -> enabled)
+  def enable (requester: Requester, userId: Int) = setEnabled(requester, userId, true)
+  def disable(requester: Requester, userId: Int) = setEnabled(requester, userId, false)
 
-    requester.patch(path, form)
+  /** @return Future(Some(error)) or Future(None) */
+  private def setEnabled(requester: Requester, userId: Int, enabled: Boolean): Future[Option[String]] = {
+    val path =
+      if (enabled)
+        Seq("users", userId, "enable")
+      else
+        Seq("users", userId, "disable")
+
+    requester.patch(path)
     .map { res =>
       res.statusCode match {
         case 200 => None

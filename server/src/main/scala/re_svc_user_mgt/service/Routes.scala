@@ -27,6 +27,9 @@ object Routes {
       case Method.Patch -> Root / "users" / Integer(userId) / "enable" =>
         new UsersEnable(userId)
 
+      case Method.Patch -> Root / "users" / Integer(userId) / "disable" =>
+        new UsersDisable(userId)
+
       // Credentials -----------------------------------------------------------
 
       case Method.Get -> Root / "credentials" / username / Integer(authType) =>

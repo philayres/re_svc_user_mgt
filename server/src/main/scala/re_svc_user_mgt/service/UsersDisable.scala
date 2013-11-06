@@ -6,11 +6,10 @@ import com.twitter.util.Future
 
 import re_svc_user_mgt.model.User
 
-/** Set the enabled flag for a user profile to true. */
-class UsersEnable(userId: Int) extends Service[Request, Response] {
+/** Set the enabled flag for a user profile to false. */
+class UsersDisable(userId: Int) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
-    val enabled = requireParamBoolean(request, "enabled")
-    User.setEnabled(userId, true)
+    User.setEnabled(userId, false)
     Future.value(request.response)
   }
 }

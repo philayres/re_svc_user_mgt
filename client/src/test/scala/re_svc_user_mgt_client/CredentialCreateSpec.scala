@@ -38,7 +38,7 @@ class CredentialCreateSpec extends Specification {
     val userId = r1.right.get
 
     val r2 = Await.result(
-      User.enable(requester, userId, false)
+      User.disable(requester, userId)
     )
     r2 must beNone
 
@@ -59,7 +59,7 @@ class CredentialCreateSpec extends Specification {
     val userId = r1.right.get
 
     val r2 = Await.result(
-      User.enable(requester, userId, false)
+      User.disable(requester, userId)
     )
     r2 must beNone
 
@@ -108,7 +108,7 @@ class CredentialCreateSpec extends Specification {
     val userId = r1.right.get
 
     val r2 = Await.result(
-      User.enable(requester, userId, false)
+      User.disable(requester, userId)
     )
     r2 must beNone
 
@@ -128,7 +128,7 @@ class CredentialCreateSpec extends Specification {
     val userId = r1.right.get
 
     val r2 = Await.result(
-      User.enable(requester, userId, false)
+      User.disable(requester, userId)
     )
     r2 must beNone
 
