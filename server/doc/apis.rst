@@ -120,8 +120,8 @@ Request body params:
 User APIs
 ---------
 
-Create user
-~~~~~~~~~~~
+Create user (and one credential)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 POST /users
 

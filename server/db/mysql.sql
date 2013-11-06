@@ -85,13 +85,66 @@ Periodically, expired nonces (TTL is 1 minute) are deleted.
 */
 CREATE TABLE nonces(
   nonce VARCHAR(64) NOT NULL,
-  created_at BIGINT NOT NULL,  /* Need to milisecond precision, TIMESTAMP/INT: second precision */
+  created_at BIGINT NOT NULL,  /* Need BIGINT: milisecond precision; TIMESTAMP/INT: second precision */
 
   PRIMARY KEY (nonce),
   KEY index_created_at (created_at)  /* Delete expired nonces faster */
 ) ENGINE=InnoDB;
 
-/* TODO: https://github.com/philayres/re_svc_user_mgt/issues/14 */
+CREATE TABLE accesses(
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  client_id INT NOT NULL,
+  user_id INT,  /* Non-null if there's a matched user */
+
+  /*
+  0: Create client machine
+  1: Delete client machine
+
+  20: Create user
+  21: Enable/disable user
+
+  (Check existence and Authenticate are logged at table auth_accesses)
+  42: Create credential
+  43: Validate/Invalidate
+  44: Update password
+  45: Delete credential
+  */
+  request_type TINYINT NOT NULL,
+
+  response_code SMALLINT NOT NULL,
+
+  KEY index_created_at (created_at),
+  KEY index_client_id (client_id)
+) ENGINE=InnoDB;
+
+/*
+Compared with table accesses, this table has these additional fields:
+- username
+- auth_type
+- credential_id
+*/
+CREATE TABLE auth_accesses(
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  client_id INT NOT NULL,
+  user_id INT,  /* Non-null if there's a matched user */
+
+  /*
+  40: Check existence
+  41: Authenticate
+  */
+  request_type TINYINT NOT NULL,
+
+  response_code SMALLINT NOT NULL,
+
+  username VARCHAR(1024) NOT NULL,
+  auth_type INT NOT NULL,
+  credential_id INT,  /* Non-null if successful (response_code = 200) */
+
+  KEY index_created_at (created_at),
+  KEY index_client_id (client_id)
+) ENGINE=InnoDB;
 
 /* Bootstrap data ------------------------------------------------------------*/
 
