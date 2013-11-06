@@ -6,6 +6,7 @@ import com.twitter.finagle.{CancelledRequestException, Service, SimpleFilter}
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.logging.Logger
 import com.twitter.util.Future
+
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
 /**

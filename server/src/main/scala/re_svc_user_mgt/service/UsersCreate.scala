@@ -1,8 +1,8 @@
 package re_svc_user_mgt.service
 
 import com.twitter.finagle.Service
-import com.twitter.util.Future
 import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.util.Future
 
 import re_svc_user_mgt.model.User
 

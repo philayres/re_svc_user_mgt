@@ -5,7 +5,7 @@ import com.twitter.util.Await
 import org.specs2.mutable._
 import Bootstrap._
 
-class CredentialValidateSpec extends Specification {
+class CredentialInvalidateSpec extends Specification {
   "exising user => OK" in {
     val username = UUID.randomUUID().toString
     val r1 = Await.result(
@@ -14,7 +14,7 @@ class CredentialValidateSpec extends Specification {
     r1 must beRight
 
     val r2 = Await.result(
-      Credential.validate(requester, username, 1)
+      Credential.invalidate(requester, username, 1)
     )
     r2 must beNone
   }
@@ -27,7 +27,7 @@ class CredentialValidateSpec extends Specification {
     r1 must beRight
 
     val r2 = Await.result(
-      Credential.validate(requester, "nonexising user", 1)
+      Credential.invalidate(requester, "nonexising user", 1)
     )
     r2 must beNone
   }

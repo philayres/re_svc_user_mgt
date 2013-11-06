@@ -173,14 +173,15 @@ Request body params:
 * username, auth_type, password
 * new_username, new_auth_type, new_password
 
-Validate/Invalidate
+Validate credential
 ~~~~~~~~~~~~~~~~~~~
 
 PATCH /credentials/:username/:auth_type/validate
 
-Request body params:
+Invalidate credential
+~~~~~~~~~~~~~~~~~~~~~
 
-* validated: true | false
+PATCH /credentials/:username/:auth_type/invalidate
 
 Update password
 ~~~~~~~~~~~~~~~

@@ -80,8 +80,14 @@ object Credential {
     }
   }
 
+  def validate(requester: Requester, username: String, authType: Int) =
+    setValidated(requester, username, authType, true)
+
+  def invalidate(requester: Requester, username: String, authType: Int) =
+    setValidated(requester, username, authType, false)
+
   /** @return Future(Some(error)) or Future(None) */
-  def validate(
+  private def setValidated(
     requester: Requester,
     username: String, authType: Int, validated: Boolean
   ): Future[Option[String]] = {
