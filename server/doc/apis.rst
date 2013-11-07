@@ -1,8 +1,8 @@
 Nonce check
 -----------
 
-Each client has its own unique client name and shared secret (the server knows
-client name and shared secret pairs).
+Each client has its own unique client name and shared secret. The server knows
+client name and shared secret pairs.
 
 For all requests, client must send this Authorization header:
 
@@ -12,8 +12,8 @@ For all requests, client must send this Authorization header:
 
 Client names must be printable ASCII character, containing no spaces.
 
-Creating nonce
-~~~~~~~~~~~~~~
+Creating nonce at client side
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -34,7 +34,7 @@ It creates this nonce:
 
   timestamp = <current time in miliseconds>
 
-  nonce = sha256Hex(
+  nonce = sha256_hex(
     "POST" +
     "/client_machines?foo=1&bar=2" +
     "username=opadmin&auth_type=999&client_name=c1&client_type=1&password=test123%21" +
@@ -54,6 +54,30 @@ The full request will look like this:
   Content-Length: 79
 
   username=opadmin&auth_type=999&client_name=c1&client_type=1&password=test123%21
+
+Checking nonce at server side
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+From the request, the server knows:
+
+* method
+* path
+* content
+* client_name
+* timestamp
+* nonce
+
+The server compares timestamp with current time. If the difference is larger
+than 1 minute, the server will deny the request.
+
+The server uses client_name to lookup shared_secret. Then it recreates nonce:
+
+::
+
+  recreated_nonce = sha256_hex(method + path + content + client_name + shared_secret + timestamp)
+
+If nonce does not match recreated_nonce, or it has been used within 1 minute,
+the server will deny the request. This is to avoid replay attack.
 
 Common info about response
 --------------------------
