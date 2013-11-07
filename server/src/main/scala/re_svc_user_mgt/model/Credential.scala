@@ -136,7 +136,7 @@ object Credential {
           }
         }
       } else {
-        Left("Credential not found")
+        Left("Incorrect username or auth type")
       }
 
       rs.close()
