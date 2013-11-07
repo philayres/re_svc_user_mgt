@@ -1,5 +1,5 @@
-Nonce check
------------
+Check request nonce
+-------------------
 
 Each client has its own unique client name and shared secret. The server knows
 client name and shared secret pairs.
@@ -12,8 +12,8 @@ For all requests, client must send this Authorization header:
 
 Client names must be printable ASCII character, containing no spaces.
 
-Creating nonce at client side
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Create nonce at client side
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -55,8 +55,8 @@ The full request will look like this:
 
   username=opadmin&auth_type=999&client_name=c1&client_type=1&password=test123%21
 
-Checking nonce at server side
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Check nonce at server side
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 From the request, the server knows:
 
@@ -68,7 +68,9 @@ From the request, the server knows:
 * nonce
 
 The server compares timestamp with current time. If the difference is larger
-than 1 minute, the server will deny the request.
+than 1 minute, the server will deny the request. Because time on different
+systems can be slightly different, use ``abs(current time - timestamp)``, not
+just ``current time - timestamp``.
 
 The server uses client_name to lookup shared_secret. Then it recreates nonce:
 
@@ -117,6 +119,9 @@ Server error:
 
 Client machine APIs
 -------------------
+
+Users and credentials be bound to client machines. Any client can be used to add
+and delete users.
 
 Create client machine
 ~~~~~~~~~~~~~~~~~~~~~
@@ -221,3 +226,25 @@ Delete credential
 ~~~~~~~~~~~~~~~~~
 
 DELETE /credentials/:username/:auth_type
+
+Log
+---
+
+See doc about DB.
+
+All requests are log to a DB table:
+
+* Access time (indexed)
+* Client ID (indexed)
+* User ID (if there's a matched user)
+* Request type
+* Response code
+
+No other identifying information should be logged.
+
+Authentication and username existence check requests are logged to another table.
+Compared to the above table, this table has these additional fields:
+
+* Username
+* Authentication type
+* Credential ID

@@ -112,7 +112,7 @@ CREATE TABLE accesses(
   */
   request_type TINYINT NOT NULL,
 
-  response_code SMALLINT NOT NULL,
+  response_status SMALLINT NOT NULL,  /* HTTP response status */
 
   KEY index_created_at (created_at),
   KEY index_client_id (client_id)
@@ -136,11 +136,11 @@ CREATE TABLE auth_accesses(
   */
   request_type TINYINT NOT NULL,
 
-  response_code SMALLINT NOT NULL,
+  response_status SMALLINT NOT NULL,
 
-  username VARCHAR(1024) NOT NULL,
-  auth_type INT NOT NULL,
-  credential_id INT,  /* Non-null if successful (response_code = 200) */
+  credential_id INT,
+  username VARCHAR(1024),  /* To save space, set to NULL if credential_id is non-NULL */
+  auth_type INT,           /* To save space, set to NULL if credential_id is non-NULL */
 
   KEY index_created_at (created_at),
   KEY index_client_id (client_id)
