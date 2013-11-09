@@ -21,7 +21,7 @@ class CredentialsAuthenticate extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
     // User check is done at Routes
 
-    val userId             = FilterRequireCredential.getUserId(request)
+    val userId             = FilterAccessLog.getUserId(request)
     val response           = request.response
     response.contentString = Json(Map("user_id" -> userId))
     response.setContentTypeJson()

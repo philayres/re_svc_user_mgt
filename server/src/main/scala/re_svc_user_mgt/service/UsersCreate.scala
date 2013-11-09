@@ -32,6 +32,7 @@ class UsersCreate extends Service[Request, Response] {
         response.contentString = Json(Map("error" -> error))
 
       case Right(userId) =>
+        FilterAccessLog.setUserId(request, userId)
         response.contentString = Json(Map("user_id" -> userId))
     }
     Future.value(request.response)

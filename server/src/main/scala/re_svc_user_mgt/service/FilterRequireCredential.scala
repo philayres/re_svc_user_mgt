@@ -21,8 +21,6 @@ class FilterRequireCredential extends SimpleFilter[Request, Response] {
 }
 
 object FilterRequireCredential extends FilterRequireCredential {
-  private val REQUEST_HEADER_USER_ID = "X_USER_ID"
-
   /**
    * Verify params: username, auth_type, and password.
    * Make sure that the user is a valid user (but not necessarily an admin).
@@ -40,6 +38,9 @@ object FilterRequireCredential extends FilterRequireCredential {
   }
 
   def checkUser(request: Request, username: String, authType: Int, password: String): Boolean = {
+    FilterAccessLog.setUsername(request, username)
+    FilterAccessLog.setAuthType(request, authType)
+
     Credential.authenticate(username, authType, password) match {
       case Left(error) =>
         val response           = request.response
@@ -48,17 +49,10 @@ object FilterRequireCredential extends FilterRequireCredential {
         response.setContentTypeJson()
         false
 
-      case Right(userId) =>
-        setUserId(request, userId)
+      case Right((credentialId, userId)) =>
+        FilterAccessLog.setCredentialId(request, credentialId)
+        FilterAccessLog.setUserId(request, userId)
         true
     }
-  }
-
-  def getUserId(request: Request): Int = {
-    request.getHeader(REQUEST_HEADER_USER_ID).toInt
-  }
-
-  private def setUserId(request: Request, userId: Int) {
-    request.setHeader(REQUEST_HEADER_USER_ID, userId.toString)
   }
 }

@@ -15,22 +15,25 @@ object Nonce {
     }
   }
 
-  /** @return Some(error) or None */
+  /** @return Left(error) or Right(clientId) */
   def check(
     method: String, path: String, content: String,
     nonce: String, clientName: String, timestamp: Long
-  ): Option[String] = {
+  ): Either[String, Int] = {
     // Use abs because time on different systems can be slightly different
     val now = System.currentTimeMillis()
     if (timestamp < 0 || Math.abs(now - timestamp) > NONCE_TTL) {
-      Some("Nonce expired")
+      Left("Nonce expired")
     } else {
       ClientMachine.getSharedSecret(clientName) match {
         case None =>
-          Some("Client not found")
+          Left("Client not found")
 
-        case Some(sharedSecret) =>
-          check(method, path, content, nonce, clientName, timestamp, now, sharedSecret)
+        case Some((clientId, sharedSecret)) =>
+          check(method, path, content, nonce, clientName, timestamp, now, sharedSecret) match {
+            case Some(error) => Left(error)
+            case None        => Right(clientId)
+          }
       }
     }
   }

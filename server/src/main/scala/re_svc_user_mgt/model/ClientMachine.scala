@@ -4,14 +4,20 @@ import java.sql.Statement
 import scala.util.Try
 
 object ClientMachine {
-  /** @return Some(sharedSecret) or None */
-  def getSharedSecret(clientName: String): Option[String] = {
+  /** @return Some((clientId, sharedSecret)) or None */
+  def getSharedSecret(clientName: String): Option[(Int, String)] = {
     DB.withConnection { con =>
-      val ps = con.prepareStatement("SELECT shared_secret FROM clients WHERE name = ?")
+      val ps = con.prepareStatement("SELECT id, shared_secret FROM clients WHERE name = ?")
       ps.setString(1, clientName)
 
       val rs  = ps.executeQuery()
-      val ret = if (rs.next()) Some(rs.getString("shared_secret")) else None
+      val ret = if (rs.next()) {
+        val id           = rs.getInt("id")
+        val sharedSecret = rs.getString("shared_secret")
+        Some((id, sharedSecret))
+      }  else {
+        None
+      }
 
       rs.close()
       ps.close()

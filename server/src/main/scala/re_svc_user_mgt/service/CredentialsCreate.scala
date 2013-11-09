@@ -17,7 +17,7 @@ class CredentialsCreate extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
     // User check is done at Routes
 
-    val userId      = FilterRequireCredential.getUserId(request)
+    val userId      = FilterAccessLog.getUserId(request).get
     val newUsername = requireParamString(request, "new_username")
     val newAuthType = requireParamInt(request, "new_auth_type")
     val newPassword = requireParamString(request, "new_password")

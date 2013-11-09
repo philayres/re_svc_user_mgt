@@ -6,7 +6,10 @@ import com.twitter.finagle.builder.ServerBuilder
 import com.twitter.finagle.http.{Http, Request, RichHttp}
 
 import re_svc_user_mgt.model.Nonce
-import re_svc_user_mgt.service.{FilterException, FilterReadParamsFromContentBody, FilterNonceCheck, Routes}
+import re_svc_user_mgt.service.{
+  FilterException, FilterReadParamsFromContentBody, FilterNonceCheck, FilterAccessLog,
+  Routes
+}
 
 object Server extends App {
   val port = Config.config.port
@@ -18,5 +21,9 @@ object Server extends App {
     .codec(RichHttp[Request](Http()))
     .bindTo(new InetSocketAddress(port))
     .name(Config.LOG_NODE)
-    .build(FilterException andThen FilterReadParamsFromContentBody andThen FilterNonceCheck andThen Routes.routes)
+    .build(
+      FilterException andThen FilterReadParamsFromContentBody andThen
+      FilterNonceCheck andThen FilterAccessLog andThen
+      Routes.routes
+    )
 }

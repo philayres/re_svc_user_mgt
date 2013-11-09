@@ -15,9 +15,15 @@ import re_svc_user_mgt.model.Credential
  */
 class CredentialsExists(username: String, authType: Int) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
+    FilterAccessLog.setUsername(request, username)
+    FilterAccessLog.setAuthType(request, authType)
+
     val response = request.response
     Credential.exists(username, authType) match {
-      case Some(userId) =>
+      case Some((credentialId, userId)) =>
+        FilterAccessLog.setCredentialId(request, credentialId)
+        FilterAccessLog.setUserId(request, userId)
+
         response.contentString = Json(Map("user_id" -> userId))
 
       case None =>

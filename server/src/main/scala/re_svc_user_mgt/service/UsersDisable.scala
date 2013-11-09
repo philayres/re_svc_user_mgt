@@ -9,6 +9,8 @@ import re_svc_user_mgt.model.User
 /** Set the enabled flag for a user profile to false. */
 class UsersDisable(userId: Int) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
+    FilterAccessLog.setUserId(request, userId)
+
     User.setEnabled(userId, false)
     Future.value(request.response)
   }

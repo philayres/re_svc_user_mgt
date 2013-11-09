@@ -5,16 +5,16 @@ import scala.util.{Try, Success, Failure}
 import org.apache.commons.codec.digest.DigestUtils
 
 object Credential {
-  /** @return Some(userId) or None */
-  def exists(username: String, authType: Int): Option[Int] = {
+  /** @return Some((credentialId, userId)) or None */
+  def exists(username: String, authType: Int): Option[(Int, Int)] = {
     authenticateOrCheckExistence(username, authType, None) match {
       case Left(error)   => None
-      case Right(userId) => Some(userId)
+      case Right(credentialId_userId) => Some(credentialId_userId)
     }
   }
 
-  /** @return Left(error) or Right(userId) */
-  def authenticate(username: String, authType: Int, password: String): Either[String, Int] = {
+  /** @return Left(error) or Right((credentialId, userId)) */
+  def authenticate(username: String, authType: Int, password: String): Either[String, (Int, Int)] = {
     authenticateOrCheckExistence(username, authType, Some(password))
   }
 
@@ -94,9 +94,9 @@ object Credential {
   /**
    * @param passwordo None: do not check password
    *
-   * @return Left(error) or Right(userId)
+   * @return Left(error) or Right((credentialId, userId))
    */
-  def authenticateOrCheckExistence(username: String, authType: Int, passwordo: Option[String]): Either[String, Int] = {
+  def authenticateOrCheckExistence(username: String, authType: Int, passwordo: Option[String]): Either[String, (Int, Int)] = {
     DB.withConnection { con =>
       val ps = con.prepareStatement("SELECT * FROM credentials WHERE username = ? AND auth_type = ? LIMIT 1")
       ps.setString(1, username)
@@ -108,7 +108,8 @@ object Credential {
         if (validated == 0) {
           Left("Credential not validated")
         } else {
-          val userId = rs.getInt("user_id")
+          val credentialId = rs.getInt("id")
+          val userId       = rs.getInt("user_id")
           passwordo match {
             case Some(password) =>
               val hashedPassword = rs.getString("password")
@@ -119,7 +120,7 @@ object Credential {
                     Left("User not found")
 
                   case Some(enabled) =>
-                    if (enabled) Right(userId) else Left("User disabled")
+                    if (enabled) Right((credentialId, userId)) else Left("User disabled")
                 }
               } else {
                 Left("Wrong password")
@@ -131,7 +132,7 @@ object Credential {
                   Left("User not found")
 
                 case Some(enabled) =>
-                  if (enabled) Right(userId) else Left("User disabled")
+                  if (enabled) Right((credentialId, userId)) else Left("User disabled")
               }
           }
         }

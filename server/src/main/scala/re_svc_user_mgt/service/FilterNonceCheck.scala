@@ -33,8 +33,12 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
               val content = request.contentString  // Empty string (not null) if the content is empty
 
               Nonce.check(method, path, content, nonce, clientName, timestamp) match {
-                case Some(error) => respondError(request, error)
-                case None        => service(request)
+                case Left(error) =>
+                  respondError(request, error)
+
+                case Right(clientId) =>
+                  FilterAccessLog.setClientId(request, clientId)
+                  service(request)
               }
 
             case _ =>

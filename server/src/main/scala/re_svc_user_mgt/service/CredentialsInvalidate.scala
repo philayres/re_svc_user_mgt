@@ -11,7 +11,7 @@ import re_svc_user_mgt.model.Credential
  *
  * Params: username, auth_type
  */
-class CredentialsInValidate(username: String, authType: Int) extends Service[Request, Response] {
+class CredentialsInvalidate(username: String, authType: Int) extends Service[Request, Response] {
   def apply(request: Request): Future[Response] = {
     Credential.setValidated(username, authType, false)
     Future.value(request.response)

@@ -94,8 +94,7 @@ CREATE TABLE nonces(
 CREATE TABLE accesses(
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  client_id INT NOT NULL,
-  user_id INT,  /* Non-null if there's a matched user */
+  client_id INT NOT NULL,  /* To save space, use client_id instead of client_name */
 
   /*
   0: Create client machine
@@ -112,7 +111,9 @@ CREATE TABLE accesses(
   */
   request_type TINYINT NOT NULL,
 
-  response_status SMALLINT NOT NULL,  /* HTTP response status */
+  response_status SMALLINT NOT NULL,
+
+  user_id INT,             /* Non-null if there's a matched user */
 
   KEY index_created_at (created_at),
   KEY index_client_id (client_id)
@@ -127,8 +128,7 @@ Compared with table accesses, this table has these additional fields:
 CREATE TABLE auth_accesses(
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  client_id INT NOT NULL,
-  user_id INT,  /* Non-null if there's a matched user */
+  client_id INT NOT NULL,  /* To save space, use client_id instead of client_name */
 
   /*
   40: Check existence
@@ -138,9 +138,10 @@ CREATE TABLE auth_accesses(
 
   response_status SMALLINT NOT NULL,
 
-  credential_id INT,
   username VARCHAR(1024),  /* To save space, set to NULL if credential_id is non-NULL */
   auth_type INT,           /* To save space, set to NULL if credential_id is non-NULL */
+  credential_id INT,       /* Non-null if there's a matched credential */
+  user_id INT,             /* Non-null if there's a matched user */
 
   KEY index_created_at (created_at),
   KEY index_client_id (client_id)

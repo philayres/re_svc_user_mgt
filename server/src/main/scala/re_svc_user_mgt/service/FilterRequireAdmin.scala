@@ -12,7 +12,7 @@ import re_svc_user_mgt.model.{Credential, User}
  */
 class FilterRequireAdmin extends SimpleFilter[Request, Response] {
   def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
-    val userId = FilterRequireCredential.getUserId(request)
+    val userId = FilterAccessLog.getUserId(request).get
     if (User.isAdmin(userId)) {
       service(request)
     } else {
