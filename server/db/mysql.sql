@@ -113,6 +113,7 @@ CREATE TABLE accesses(
 
   response_status SMALLINT NOT NULL,
 
+  credential_id INT,       /* Non-null if there's a matched credential */
   user_id INT,             /* Non-null if there's a matched user */
 
   KEY index_created_at (created_at),
@@ -123,7 +124,8 @@ CREATE TABLE accesses(
 Compared with table accesses, this table has these additional fields:
 - username
 - auth_type
-- credential_id
+and no field:
+- user_id (can be inferred from credential_id)
 */
 CREATE TABLE auth_accesses(
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -141,7 +143,6 @@ CREATE TABLE auth_accesses(
   username VARCHAR(1024),  /* To save space, set to NULL if credential_id is non-NULL */
   auth_type INT,           /* To save space, set to NULL if credential_id is non-NULL */
   credential_id INT,       /* Non-null if there's a matched credential */
-  user_id INT,             /* Non-null if there's a matched user */
 
   KEY index_created_at (created_at),
   KEY index_client_id (client_id)

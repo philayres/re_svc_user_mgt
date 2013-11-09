@@ -5,6 +5,7 @@ import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
 
 import re_svc_user_mgt.Config
+import re_svc_user_mgt.model.AccessLog
 
 class FilterAccessLog extends SimpleFilter[Request, Response] {
   def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
@@ -15,6 +16,17 @@ class FilterAccessLog extends SimpleFilter[Request, Response] {
 
     val clientId = FilterAccessLog.getClientId(request).get
     FilterAccessLog.getRequestType(request) foreach { requestType =>
+      if (RequestType.isAuth(requestType))
+        AccessLog.logAuthRequest(
+          clientId, requestType, status.getCode,
+          FilterAccessLog.getUsername(request), FilterAccessLog.getAuthType(request),
+          FilterAccessLog.getCredentialId(request)
+        )
+      else
+        AccessLog.logNonAuthRequest(
+          clientId, requestType, status.getCode,
+          FilterAccessLog.getCredentialId(request), FilterAccessLog.getUserId(request)
+        )
     }
 
     ret
@@ -37,6 +49,10 @@ object RequestType {
   val CREDENTIAL_INVALIDATE      = 44
   val CREDENTIAL_UPDATE_PASSWORD = 45
   val CREDENTIAL_DELETE          = 46
+
+  def isAuth(requestType: Int) =
+    requestType == CREDENTIAL_EXISTS ||
+    requestType == CREDENTIAL_AUTHENTICATE
 }
 
 /** Use request headers to share data that needs to be logged among filters and service. */
