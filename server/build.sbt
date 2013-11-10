@@ -16,6 +16,9 @@ libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.26"
 
 libraryDependencies += "com.jolbox" % "bonecp" % "0.8.0.RELEASE"
 
+// BoneCP uses SLF4J, an implementation of SLF4J is needed
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.0.13" % "runtime"
+
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.2.5"
 
 // JSON4S uses scalap 2.10.0, which in turn uses scala-compiler 2.10.0, which in

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- http://logback.qos.ch/manual/configuration.html -->
+<configuration scan="true" scanPeriod="60 seconds">
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>./log/bonecp.log</file>
+    <encoder>
+      <pattern>[%level] [%d{yy-MM-dd HH:mm:ss}] %c{1}: %m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>./log/bonecp.log.%d{yy-MM-dd}</fileNamePattern>
+    </rollingPolicy>
+  </appender>
+
+  <root level="DEBUG">
+    <appender-ref ref="FILE"/>
+  </root>
+</configuration>
