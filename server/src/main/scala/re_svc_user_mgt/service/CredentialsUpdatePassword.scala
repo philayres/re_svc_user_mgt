@@ -1,7 +1,7 @@
 package re_svc_user_mgt.service
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Future
 
 import re_svc_user_mgt.model.Credential
@@ -21,13 +21,21 @@ class CredentialsUpdatePassword(username: String, authType: Int) extends Service
     val newPassword = requireParamString(request, "new_password")
     val forceNew    = request.params.getBooleanOrElse("force_new", false)
 
+    val response = request.response
     if (forceNew) {
-      Credential.updatePassword(username, authType, newPassword)
+      updatePassword(response, username, authType, newPassword)
     } else {
       val password = requireParamString(request, "password")
       if (FilterRequireCredential.checkUser(request, username, authType, password))
-        Credential.updatePassword(username, authType, newPassword)
+        updatePassword(response, username, authType, newPassword)
     }
-    Future.value(request.response)
+    Future.value(response)
+  }
+
+  private def updatePassword(response: Response, username: String, authType: Int, newPassword: String) {
+    if (!Credential.updatePassword(username, authType, newPassword)) {
+      response.status        = Status.Conflict
+      response.contentString = Json(Map("error" -> "Incorrect username or auth type"))
+    }
   }
 }

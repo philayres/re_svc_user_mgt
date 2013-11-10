@@ -74,7 +74,7 @@ class CredentialUpdatePasswordSpec extends Specification {
       val r2 = Await.result(
         Credential.updatePassword(requester, "nonexisting user", 1, "p2")
       )
-      r2 must beNone
+      r2 must beSome
     }
   }
 }

@@ -52,7 +52,7 @@ object Credential {
     }
   }
 
-  def updatePassword(username: String, authType: Int, newPassword: String) {
+  def updatePassword(username: String, authType: Int, newPassword: String): Boolean = {
     val salt           = Secure.makeSecret()
     val hashedPassword = Secure.hashPassword(newPassword, salt)
 
@@ -63,8 +63,10 @@ object Credential {
       ps.setString(3, username)
       ps.setInt   (4, authType)
 
-      ps.executeUpdate()
+      val updatedRows = ps.executeUpdate()
+      val ret         = updatedRows > 0
       ps.close()
+      ret
     }
   }
 

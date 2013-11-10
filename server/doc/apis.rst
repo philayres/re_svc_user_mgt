@@ -385,8 +385,8 @@ PATCH /credentials/:username/:auth_type/update_password
 
 Content params:
 
-* new_password
 * password or force_new=true
+* new_password
 
 When force_new is false or not given, password is used.
 
@@ -403,12 +403,16 @@ Failure:
 * Status: 409 Conflict
 * Content: {"error": msg}
 
-Error:
+Error when force_new is false or not given:
 
 * username + auth_type pair does not exist
 * username + auth_type pair is not validated
 * Password is incorrect
 * User is disabled
+
+Error when force_new is true:
+
+* username + auth_type pair does not exist
 
 Delete credential
 ~~~~~~~~~~~~~~~~~
