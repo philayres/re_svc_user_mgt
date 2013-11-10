@@ -234,8 +234,19 @@ PATCH /users/:user_id/enable
 Response
 ^^^^^^^^
 
+Success:
+
 * Status: 200 OK
 * Content: empty
+
+Failure:
+
+* Status: 409 Conflict
+* Content: {"error": msg}
+
+Error:
+
+* User does not exist
 
 Disable user
 ~~~~~~~~~~~~
@@ -248,8 +259,19 @@ PATCH /users/:user_id/disable
 Response
 ^^^^^^^^
 
+Success:
+
 * Status: 200 OK
 * Content: empty
+
+Failure:
+
+* Status: 409 Conflict
+* Content: {"error": msg}
+
+Error:
+
+* User does not exist
 
 Credential APIs
 ---------------
