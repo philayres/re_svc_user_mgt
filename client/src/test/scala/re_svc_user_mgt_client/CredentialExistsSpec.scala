@@ -30,8 +30,7 @@ class CredentialExistsSpec extends Specification {
     val r2 = Await.result(
       Credential.exists(requester, username, 1)
     )
-    r2 must beRight
-    r2.right.get must beNone
+    r2 must beLeft
   }
 
   "disabled user, validated credential => NG" in {
@@ -51,8 +50,7 @@ class CredentialExistsSpec extends Specification {
     val r3 = Await.result(
       Credential.exists(requester, username, 1)
     )
-    r3 must beRight
-    r3.right.get must beNone
+    r3 must beLeft
   }
 
   "disabled user, invalidated credential => NG" in {
@@ -72,15 +70,13 @@ class CredentialExistsSpec extends Specification {
     val r3 = Await.result(
       Credential.exists(requester, username, 1)
     )
-    r3 must beRight
-    r3.right.get must beNone
+    r3 must beLeft
   }
 
   "nonexisting username => NG" in {
     val r = Await.result(
       Credential.exists(requester, "nonexisting username", 1)
     )
-    r must beRight
-    r.right.get must beNone
+    r must beLeft
   }
 }
