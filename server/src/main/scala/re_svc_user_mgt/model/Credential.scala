@@ -74,14 +74,16 @@ object Credential {
     }
   }
 
-  def delete(username: String, authType: Int) {
+  def delete(username: String, authType: Int): Boolean = {
     DB.withConnection { con =>
       val ps = con.prepareStatement("DELETE FROM credentials WHERE username = ? AND auth_type = ?")
       ps.setString(1, username)
       ps.setInt   (2, authType)
 
-      ps.executeUpdate()
+      val deletedRows = ps.executeUpdate()
+      val ret         = deletedRows > 0
       ps.close()
+      ret
     }
   }
 

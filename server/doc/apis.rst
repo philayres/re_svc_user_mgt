@@ -447,8 +447,19 @@ DELETE /credentials/:username/:auth_type
 Response
 ^^^^^^^^
 
+Success:
+
 * Status: 200 OK
 * Content: empty
+
+Failure:
+
+* Status: 409 Conflict
+* Content: {"error": msg}
+
+Error:
+
+* username + auth_type pair does not exist
 
 Log
 ---

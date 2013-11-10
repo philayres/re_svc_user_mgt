@@ -24,10 +24,10 @@ class CredentialDeleteSpec extends Specification {
     r3 must beLeft
   }
 
-  "nonexising user => OK" in {
+  "nonexising user => NG" in {
     val r = Await.result(
       Credential.delete(requester, "nonexising user", 1)
     )
-    r must beNone
+    r must beSome
   }
 }

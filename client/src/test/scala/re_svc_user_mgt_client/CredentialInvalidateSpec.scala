@@ -19,7 +19,7 @@ class CredentialInvalidateSpec extends Specification {
     r2 must beNone
   }
 
-  "nonexising user => OK" in {
+  "nonexising user => NG" in {
     val username = UUID.randomUUID().toString
     val r1 = Await.result(
       User.create(requester, username, 1, "p", true)

@@ -70,7 +70,7 @@ class CredentialUpdatePasswordSpec extends Specification {
       r3 must beRight
     }
 
-    "nonexisting user => OK" in {
+    "nonexisting user => NG" in {
       val r2 = Await.result(
         Credential.updatePassword(requester, "nonexisting user", 1, "p2")
       )
