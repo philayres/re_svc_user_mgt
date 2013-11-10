@@ -29,6 +29,6 @@ class CredentialValidateSpec extends Specification {
     val r2 = Await.result(
       Credential.validate(requester, "nonexising user", 1)
     )
-    r2 must beNone
+    r2 must beSome
   }
 }

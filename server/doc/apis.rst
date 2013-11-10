@@ -358,8 +358,19 @@ PATCH /credentials/:username/:auth_type/validate
 Response
 ^^^^^^^^
 
+Success:
+
 * Status: 200 OK
 * Content: empty
+
+Failure:
+
+* Status: 409 Conflict
+* Content: {"error": msg}
+
+Error:
+
+* username + auth_type pair does not exist
 
 Invalidate credential
 ~~~~~~~~~~~~~~~~~~~~~
@@ -372,8 +383,19 @@ PATCH /credentials/:username/:auth_type/invalidate
 Response
 ^^^^^^^^
 
+Success:
+
 * Status: 200 OK
 * Content: empty
+
+Failure:
+
+* Status: 409 Conflict
+* Content: {"error": msg}
+
+Error:
+
+* username + auth_type pair does not exist
 
 Update password
 ~~~~~~~~~~~~~~~

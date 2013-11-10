@@ -40,18 +40,22 @@ object Credential {
     ret
   }
 
-  def setValidated(username: String, authType: Int, validated: Boolean) {
+  /** @return false if username + authType does not exist */
+  def setValidated(username: String, authType: Int, validated: Boolean): Boolean = {
     DB.withConnection { con =>
       val ps = con.prepareStatement("UPDATE credentials SET validated = ? WHERE username = ? AND auth_type = ?")
       ps.setInt   (1, if (validated) 1 else 0)
       ps.setString(2, username)
       ps.setInt   (3, authType)
 
-      ps.executeUpdate()
+      val updatedRows = ps.executeUpdate()
+      val ret         = updatedRows > 0
       ps.close()
+      ret
     }
   }
 
+  /** @return false if username + authType does not exist */
   def updatePassword(username: String, authType: Int, newPassword: String): Boolean = {
     val salt           = Secure.makeSecret()
     val hashedPassword = Secure.hashPassword(newPassword, salt)
