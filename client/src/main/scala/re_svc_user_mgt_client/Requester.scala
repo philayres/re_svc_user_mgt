@@ -5,7 +5,7 @@ import java.net.{InetSocketAddress, URL, URLEncoder}
 import com.twitter.finagle.Service
 import com.twitter.finagle.builder.ClientBuilder
 import com.twitter.finagle.http.{Http, Request, RequestBuilder, Response, RichHttp, SimpleElement}
-import com.twitter.util.Future
+import com.twitter.util.{Duration, Future}
 
 import org.apache.commons.codec.digest.DigestUtils
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names.AUTHORIZATION
@@ -18,10 +18,13 @@ class Requester(
 ) {
   private val protocol = if (https) "https" else "http"
 
+  // http://twitter.github.io/finagle/docs/com/twitter/finagle/builder/ClientBuilder.html
   private val client: Service[Request, Response] = ClientBuilder()
     .codec(RichHttp[Request](Http()))
     .hosts(new InetSocketAddress(port))
     .hostConnectionLimit(10)
+    .timeout(Duration.fromSeconds(10))
+    .keepAlive(true)
     .build()
 
   def close() {
