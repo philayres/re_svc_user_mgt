@@ -44,7 +44,7 @@ object FilterRequireCredential extends FilterRequireCredential {
     Credential.authenticate(username, authType, password) match {
       case Left(error) =>
         val response           = request.response
-        response.status        = Status.Unauthorized
+        response.status        = Status.Conflict
         response.contentString = Json(Map("error" -> error))
         response.setContentTypeJson()
         false

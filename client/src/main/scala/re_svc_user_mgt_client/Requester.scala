@@ -73,6 +73,6 @@ class Requester(
     val content   = request.getContent.toString(CharsetUtil.UTF_8)  // Empty string (not null) if the content is empty
     val timestamp = System.currentTimeMillis()
     val nonce     = DigestUtils.sha256Hex(method + path + content + clientName + sharedSecret + timestamp)
-    request.addHeader(AUTHORIZATION, s"$nonce $clientName $timestamp")
+    request.addHeader("X-Nonce", s"$nonce $clientName $timestamp")
   }
 }

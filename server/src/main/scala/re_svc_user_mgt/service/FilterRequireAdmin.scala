@@ -17,8 +17,8 @@ class FilterRequireAdmin extends SimpleFilter[Request, Response] {
       service(request)
     } else {
       val response = request.response
-      response.status        = Status.Unauthorized
-      response.contentString = Json(Map("error" -> "Not admin"))
+      response.status        = Status.Conflict
+      response.contentString = Json(Map("error" -> "User is not admin"))
       response.setContentTypeJson()
       Future.value(response)
     }

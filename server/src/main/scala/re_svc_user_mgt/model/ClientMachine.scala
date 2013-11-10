@@ -25,8 +25,8 @@ object ClientMachine {
     }
   }
 
-  /** @return Left(error) or Right((clientId, sharedSecret)) */
-  def create(clientName: String, clientType: Int): Either[String, (Int, String)] = {
+  /** @return Some((clientId, sharedSecret)) or None for duplicate client name */
+  def create(clientName: String, clientType: Int): Option[(Int, String)] = {
     DB.withConnection { con =>
       val sharedSecret = Secure.makeSecret()
 
@@ -41,11 +41,11 @@ object ClientMachine {
       val t = Try(ps.executeUpdate())
       if (t.isFailure) {
         ps.close()
-        Left("Duplicate client name")
+        None
       } else {
         val rs = ps.getGeneratedKeys()
         rs.next()
-        val ret = Right((rs.getInt(1), sharedSecret))
+        val ret = Some((rs.getInt(1), sharedSecret))
 
         rs.close()
         ps.close()
@@ -54,14 +54,14 @@ object ClientMachine {
     }
   }
 
-  /** @return Some(error) or None */
-  def delete(clientName: String): Option[String] = {
+  /** @return false if client not found */
+  def delete(clientName: String): Boolean = {
     DB.withConnection { con =>
       val ps = con.prepareStatement("DELETE FROM clients WHERE name = ?")
       ps.setString(1, clientName)
 
       val deletedRows = ps.executeUpdate()
-      val ret         = if (deletedRows < 1) Some("Not found") else None
+      val ret         = deletedRows > 0
 
       ps.close()
       ret

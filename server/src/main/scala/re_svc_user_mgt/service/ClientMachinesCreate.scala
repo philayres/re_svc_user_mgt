@@ -23,17 +23,16 @@ class ClientMachinesCreate extends Service[Request, Response] {
 
     val clientName = requireParamString(request, "client_name")
     if (clientName.contains(' ')) {
-      response.status        = Status.BadRequest
+      response.status        = Status.Conflict
       response.contentString = Json(Map("error" -> "client_name must be printable ASCII character, containing no spaces"))
     } else {
       val clientType = requireParamInt(request, "client_type")
       ClientMachine.create(clientName, clientType) match {
-        case Left(error) =>
-          response.status        = Status.BadRequest
-          response.contentString = Json(Map("error" -> error))
-
-        case Right((clientId, sharedSecret)) =>
+        case Some((clientId, sharedSecret)) =>
           response.contentString = Json(Map("client_id" -> clientId, "shared_secret" -> sharedSecret))
+        case None =>
+          response.status        = Status.Conflict
+          response.contentString = Json(Map("error" -> "Duplicate client name"))
       }
     }
 

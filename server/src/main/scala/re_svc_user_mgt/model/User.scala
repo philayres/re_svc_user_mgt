@@ -21,23 +21,21 @@ object User {
   /**
    * Create user and one credential.
    *
-   * @return Left(error) or Right(userId)
+   *  @return Some(clientId) or None if duplicate username + authType pair
    */
-  def create(username: String, authType: Int, password: String, validated: Boolean): Either[String, Int] = {
+  def create(username: String, authType: Int, password: String, validated: Boolean): Option[Int] = {
     // Transaction
     DB.withConnection { con =>
       con.setAutoCommit(false)
 
       val userId = create(con)
 
-      Credential.create(con, userId, username, authType, password, validated) match {
-        case Some(error) =>
-          con.rollback()
-          Left(error)
-
-        case None =>
-          con.commit()
-          Right(userId)
+      if (Credential.create(con, userId, username, authType, password, validated)) {
+        con.commit()
+        Some(userId)
+      } else {
+        con.rollback()
+        None
       }
     }
   }

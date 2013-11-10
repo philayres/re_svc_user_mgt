@@ -20,14 +20,15 @@ class CredentialsExists(username: String, authType: Int) extends Service[Request
 
     val response = request.response
     Credential.exists(username, authType) match {
-      case Some((credentialId, userId)) =>
+      case Left(error) =>
+        response.status = Status.Conflict
+        response.contentString = Json(Map("error" -> error))
+
+      case Right((credentialId, userId)) =>
         FilterAccessLog.setCredentialId(request, credentialId)
         FilterAccessLog.setUserId(request, userId)
 
         response.contentString = Json(Map("user_id" -> userId))
-
-      case None =>
-        response.status = Status.NotFound
     }
     response.setContentTypeJson()
     Future.value(request.response)

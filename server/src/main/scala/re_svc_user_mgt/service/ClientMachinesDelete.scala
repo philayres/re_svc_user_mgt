@@ -18,12 +18,9 @@ class ClientMachinesDelete(clientName: String) extends Service[Request, Response
     // User check is done at Routes
 
     val response = request.response
-    ClientMachine.delete(clientName) match {
-      case Some(error) =>
-        response.status        = Status.BadRequest
-        response.contentString = Json(Map("error" -> error))
-
-      case None =>
+    if (!ClientMachine.delete(clientName)) {
+      response.status        = Status.Conflict
+      response.contentString = Json(Map("error" -> "Client not found"))
     }
     response.setContentTypeJson()
     Future.value(response)

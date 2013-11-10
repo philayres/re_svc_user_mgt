@@ -23,12 +23,9 @@ class CredentialsCreate extends Service[Request, Response] {
     val newPassword = requireParamString(request, "new_password")
 
     val response = request.response
-    Credential.create(userId, newUsername, newAuthType, newPassword, true) match {
-      case Some(error) =>
-        response.status        = Status.BadRequest
-        response.contentString = Json(Map("error" -> error))
-
-      case None =>
+    if (!Credential.create(userId, newUsername, newAuthType, newPassword, true)) {
+      response.status        = Status.Conflict
+      response.contentString = Json(Map("error" -> "Duplicate username + auth_type pair"))
     }
     response.setContentTypeJson()
     Future.value(response)

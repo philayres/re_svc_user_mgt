@@ -121,11 +121,10 @@ CREATE TABLE accesses(
 ) ENGINE=InnoDB;
 
 /*
-Compared with table accesses, this table has these additional fields:
+Compared with table accesses, this table does not have field user_id (can be
+inferred from credential_id), but has these additional fields:
 - username
 - auth_type
-and no field:
-- user_id (can be inferred from credential_id)
 */
 CREATE TABLE auth_accesses(
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

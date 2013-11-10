@@ -27,13 +27,13 @@ class UsersCreate extends Service[Request, Response] {
 
     val response = request.response
     User.create(username, authType, password, validated) match {
-      case Left(error) =>
-        response.status        = Status.BadRequest
-        response.contentString = Json(Map("error" -> error))
-
-      case Right(userId) =>
+      case Some(userId) =>
         FilterAccessLog.setUserId(request, userId)
         response.contentString = Json(Map("user_id" -> userId))
+
+      case None =>
+        response.status        = Status.Conflict
+        response.contentString = Json(Map("error" -> "Duplicate username + auth_type pair"))
     }
     Future.value(request.response)
   }

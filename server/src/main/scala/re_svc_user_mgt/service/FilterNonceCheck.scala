@@ -14,14 +14,14 @@ import re_svc_user_mgt.model.Nonce
 /** Idea: http://tyleregeto.com/article/a-guide-to-nonce */
 class FilterNonceCheck extends SimpleFilter[Request, Response] {
   def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
-    request.headers.get(AUTHORIZATION) match {
+    request.headers.get("X-Nonce") match {
       case None =>
-        respondError(request, "No Authorization header (<nonce> <client name> <timestamp in miliseconds>)")
+        respondError(request, "No X-Nonce header (<nonce> <client name> <timestamp in miliseconds>)")
 
       case Some(header) =>
         val array = header.split(' ')
         if (array.length != 3) {
-          respondError(request, "Authorization header must be <nonce> <client name> <timestamp in miliseconds>")
+          respondError(request, "X-Nonce header must be <nonce> <client name> <timestamp in miliseconds>")
         } else {
           Try((array(2).toLong)) match {
             case Success(timestamp) =>
@@ -42,7 +42,7 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
               }
 
             case _ =>
-              respondError(request, "Authorization header must be <nonce> <client name> <timestamp in miliseconds>")
+              respondError(request, "X-Nonce header must be <nonce> <client name> <timestamp in miliseconds>")
           }
         }
     }
@@ -55,7 +55,7 @@ class FilterNonceCheck extends SimpleFilter[Request, Response] {
     log.warning(msg + ": " + request.toString)
 
     val response           = request.response
-    response.status        = Status.Unauthorized
+    response.status        = Status.Forbidden
     response.contentString = Json(Map("error" -> msg))
     response.setContentTypeJson()
     Future.value(response)

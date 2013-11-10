@@ -5,12 +5,9 @@ import scala.util.{Try, Success, Failure}
 import org.apache.commons.codec.digest.DigestUtils
 
 object Credential {
-  /** @return Some((credentialId, userId)) or None */
-  def exists(username: String, authType: Int): Option[(Int, Int)] = {
-    authenticateOrCheckExistence(username, authType, None) match {
-      case Left(error)   => None
-      case Right(credentialId_userId) => Some(credentialId_userId)
-    }
+  /** @return Left(error) or Right((credentialId, userId)) */
+  def exists(username: String, authType: Int): Either[String, (Int, Int)] = {
+    authenticateOrCheckExistence(username, authType, None)
   }
 
   /** @return Left(error) or Right((credentialId, userId)) */
@@ -18,15 +15,15 @@ object Credential {
     authenticateOrCheckExistence(username, authType, Some(password))
   }
 
-  /** @return Some(error) or None */
-  def create(userId: Int, username: String, authType: Int, password: String, validated: Boolean): Option[String] = {
+  /** @return false if duplicate username + authType pair */
+  def create(userId: Int, username: String, authType: Int, password: String, validated: Boolean): Boolean = {
     DB.withConnection { con =>
       create(con, userId, username, authType, password, validated)
     }
   }
 
-  /** @return Some(error) or None */
-  def create(con: Connection, userId: Int, username: String, authType: Int, password: String, validated: Boolean): Option[String] = {
+  /** @return false if duplicate username + authType pair */
+  def create(con: Connection, userId: Int, username: String, authType: Int, password: String, validated: Boolean): Boolean = {
     val salt           = Secure.makeSecret()
     val hashedPassword = Secure.hashPassword(password, salt)
 
@@ -38,14 +35,7 @@ object Credential {
     ps.setString(5, salt)
     ps.setInt   (6, if (validated) 1 else 0)
 
-    val ret = Try(ps.executeUpdate()) match {
-      case Success(insertedRows) =>
-        None
-
-      case Failure(e) =>
-        Some("Duplicate username + auth_type pair")
-    }
-
+    val ret = Try(ps.executeUpdate()).isSuccess
     ps.close()
     ret
   }
