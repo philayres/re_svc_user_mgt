@@ -1,9 +1,8 @@
 package re_svc_user_mgt
 
+import java.io.FileInputStream
+import java.util.Properties
 import com.twitter.logging.{FileHandler, Level, Logger, LoggerFactory, Policy}
-import com.typesafe.config.ConfigFactory
-
-case class Config(port: Int, mysqlUrl: String)
 
 object Config {
   val LOG_NODE = "re_svc_user_mgt"
@@ -11,11 +10,12 @@ object Config {
   val config = loadConfigFile()
   val log    = configLog()
 
-  private def loadConfigFile(): Config = {
-    val config   = ConfigFactory.load("re_svc_user_mgt.conf").getConfig("re_svc_user_mgt")
-    val port     = config.getInt("port")
-    val mysqlUrl = config.getString("mysql_url")
-    Config(port, mysqlUrl)
+  private def loadConfigFile(): Properties = {
+    val is  = new FileInputStream("config/re_svc_user_mgt.properties")
+    val ret = new Properties
+    ret.load(is)
+    is.close()
+    ret
   }
 
   private def configLog(): Logger = {

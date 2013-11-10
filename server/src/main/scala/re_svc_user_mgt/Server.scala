@@ -12,7 +12,7 @@ import re_svc_user_mgt.service.{
 }
 
 object Server extends App {
-  val port = Config.config.port
+  val port = Config.config.getProperty("port").toInt
   Config.log.info("Server starts on port %d", port)
 
   Nonce.schedulePeriodicallyDeleteExpiredNonces()

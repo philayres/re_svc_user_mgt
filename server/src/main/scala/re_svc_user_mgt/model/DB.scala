@@ -7,8 +7,7 @@ import re_svc_user_mgt.Config.config
 object DB {
   private val pool: BoneCP = {
     Class.forName("com.mysql.jdbc.Driver")
-    val bc = new BoneCPConfig
-    bc.setJdbcUrl(config.mysqlUrl)
+    val bc = new BoneCPConfig(config)
     new BoneCP(bc)
   }
 

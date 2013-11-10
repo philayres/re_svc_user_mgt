@@ -10,8 +10,6 @@ scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked")
 
 //------------------------------------------------------------------------------
 
-libraryDependencies += "com.typesafe" % "config" % "1.0.2"
-
 libraryDependencies += "com.twitter" %% "finagle-http" % "6.7.4"
 
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.26"
