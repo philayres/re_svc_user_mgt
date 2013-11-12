@@ -28,12 +28,6 @@ Run in development mode
 
   sbt run
 
-Log:
-
-* is output to log/re_svc_user_mgt.log
-* is rolled daily
-* level is DEBUG
-
 Release for production mode
 ---------------------------
 
@@ -70,11 +64,13 @@ To start the server:
 To tune JVM memory, modify ``JAVA_OPTS`` in the start script.
 
 Note about log
----------
+--------------
 
 BoneCP uses SLF4J while Finagle (and re_svc_user_mgt) uses JUL.
 We don't use jul-to-slf4j bridge because it's slow:
 http://www.slf4j.org/legacy.html#jul-to-slf4j
 
-* log/bonecp.log: SLF4J
+* log/bonecp.log: Logback (an SLF4J implementation, see config/logback.xml)
 * log/re_svc_user_mgt.log: JUL
+
+Log files are rolled daily. Log level is DEBUG by default.

@@ -1,15 +1,9 @@
 Scala client sample for RE Service for User Management.
 
-Run
----
+Please see the client tests and the doc of the server side
+to know how to use the client side.
 
-Start the server, then run the sample client:
-
-::
-
-  sbt run
-
-or the tests:
+To run the tests (remember to start the server):
 
 ::
 
