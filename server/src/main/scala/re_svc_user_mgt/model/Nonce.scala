@@ -63,7 +63,7 @@ object Nonce {
 
       val rs  = ps.executeQuery()
       if (rs.next()) {
-        val createdAt = rs.getInt("created_at")
+        val createdAt = rs.getLong("created_at")
 
         // Use abs because time on different systems can be slightly different
         if (Math.abs(now - createdAt) > NONCE_TTL) {

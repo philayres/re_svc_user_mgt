@@ -32,23 +32,21 @@ class Requester(
   }
 
   def get(path: Seq[Any]) =
-    request(HttpMethod.GET, path)
+    sendRequest(HttpMethod.GET, path)
 
   def post(path: Seq[Any], form: Map[String, Any] = Map.empty) =
-    request(HttpMethod.POST, path, form)
+    sendRequest(HttpMethod.POST, path, form)
 
   def put(path: Seq[Any], form: Map[String, Any] = Map.empty) =
-    request(HttpMethod.PUT, path, form)
+    sendRequest(HttpMethod.PUT, path, form)
 
   def patch(path: Seq[Any], form: Map[String, Any] = Map.empty) =
-    request(HttpMethod.PATCH, path, form)
+    sendRequest(HttpMethod.PATCH, path, form)
 
   def delete(path: Seq[Any], form: Map[String, Any] = Map.empty) =
-    request(HttpMethod.DELETE, path, form)
+    sendRequest(HttpMethod.DELETE, path, form)
 
-  //----------------------------------------------------------------------------
-
-  private def request(method: HttpMethod, path: Seq[Any], form: Map[String, Any] = Map.empty): Future[Response] = {
+  def mkRequest(method: HttpMethod, path: Seq[Any], form: Map[String, Any] = Map.empty): Request = {
     val builder = RequestBuilder()
       .url(new URL(protocol, host, port, mkPath(path)))
 
@@ -62,8 +60,19 @@ class Requester(
     }
 
     addNonce(req)
-    client(Request(req))
+    Request(req)
   }
+
+  def sendRequest(method: HttpMethod, path: Seq[Any], form: Map[String, Any] = Map.empty): Future[Response] = {
+    val req = mkRequest(method, path, form)
+    client(req)
+  }
+
+  def sendRequest(req: Request): Future[Response] = {
+    client(req)
+  }
+
+  //----------------------------------------------------------------------------
 
   private def mkPath(path: Seq[Any]): String = {
     val encoded = path.map { elem => URLEncoder.encode(elem.toString, "UTF8") }
