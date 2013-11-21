@@ -65,19 +65,19 @@ object FilterAccessLog extends FilterAccessLog {
   private val CREDENTIAL_ID = "X_CREDENTIAL_ID"
   private val USER_ID       = "X_USER_ID"
 
-  def getClientId    (request: Request): Option[Int]    = Option(request.getHeader(CLIENT_ID))    .map(_.toInt)
-  def getRequestType (request: Request): Option[Int]    = Option(request.getHeader(REQUEST_TYPE)) .map(_.toInt)
+  def getClientId    (request: Request): Option[Int] = request.headerMap.get(CLIENT_ID)   .map(_.toInt)
+  def getRequestType (request: Request): Option[Int] = request.headerMap.get(REQUEST_TYPE).map(_.toInt)
 
-  def getUsername    (request: Request): Option[String] = Option(request.getHeader(USERNAME))
-  def getAuthType    (request: Request): Option[Int]    = Option(request.getHeader(AUTH_TYPE))    .map(_.toInt)
-  def getCredentialId(request: Request): Option[Int]    = Option(request.getHeader(CREDENTIAL_ID)).map(_.toInt)
-  def getUserId      (request: Request): Option[Int]    = Option(request.getHeader(USER_ID))      .map(_.toInt)
+  def getUsername    (request: Request): Option[String] = request.headerMap.get(USERNAME)
+  def getAuthType    (request: Request): Option[Int]    = request.headerMap.get(AUTH_TYPE)    .map(_.toInt)
+  def getCredentialId(request: Request): Option[Int]    = request.headerMap.get(CREDENTIAL_ID).map(_.toInt)
+  def getUserId      (request: Request): Option[Int]    = request.headerMap.get(USER_ID)      .map(_.toInt)
 
-  def setClientId    (request: Request, clientId:    Int)  { request.setHeader(CLIENT_ID,     clientId.toString)     }
-  def setRequestType (request: Request, requestType: Int)  { request.setHeader(REQUEST_TYPE,  requestType.toString)  }
+  def setClientId    (request: Request, clientId:    Int)  { request.headerMap(CLIENT_ID)    = clientId.toString    }
+  def setRequestType (request: Request, requestType: Int)  { request.headerMap(REQUEST_TYPE) = requestType.toString }
 
-  def setUsername    (request: Request, username: String)  { request.setHeader(USERNAME,      username)              }
-  def setAuthType    (request: Request, authType: Int)     { request.setHeader(AUTH_TYPE,     authType.toString)     }
-  def setCredentialId(request: Request, credentialId: Int) { request.setHeader(CREDENTIAL_ID, credentialId.toString) }
-  def setUserId      (request: Request, userId: Int)       { request.setHeader(USER_ID,       userId.toString)       }
+  def setUsername    (request: Request, username:     String) { request.headerMap(USERNAME)      = username              }
+  def setAuthType    (request: Request, authType:     Int)    { request.headerMap(AUTH_TYPE)     = authType.toString     }
+  def setCredentialId(request: Request, credentialId: Int)    { request.headerMap(CREDENTIAL_ID) = credentialId.toString }
+  def setUserId      (request: Request, userId:       Int)    { request.headerMap(USER_ID)       = userId.toString       }
 }

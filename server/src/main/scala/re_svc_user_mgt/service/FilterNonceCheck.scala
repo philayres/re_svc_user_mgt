@@ -14,7 +14,7 @@ import re_svc_user_mgt.model.Nonce
 /** Idea: http://tyleregeto.com/article/a-guide-to-nonce */
 class FilterNonceCheck extends SimpleFilter[Request, Response] {
   def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
-    request.headers.get("X-Nonce") match {
+    request.headerMap.get("X-Nonce") match {
       case None =>
         respondError(request, "No X-Nonce header (<nonce> <client name> <timestamp in miliseconds>)")
 

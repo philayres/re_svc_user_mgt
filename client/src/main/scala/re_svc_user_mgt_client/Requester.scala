@@ -59,7 +59,7 @@ class Requester(
       builder.build(method, None)
     }
 
-    addNonce(req)
+    setNonce(req)
     Request(req)
   }
 
@@ -79,12 +79,12 @@ class Requester(
     "/" + encoded.mkString("/")
   }
 
-  private def addNonce(request: HttpRequest) {
+  private def setNonce(request: HttpRequest) {
     val method    = request.getMethod
     val path      = request.getUri
     val content   = request.getContent.toString(CharsetUtil.UTF_8)  // Empty string (not null) if the content is empty
     val timestamp = System.currentTimeMillis()
     val nonce     = DigestUtils.sha256Hex(method + path + content + clientName + sharedSecret + timestamp)
-    request.addHeader("X-Nonce", s"$nonce $clientName $timestamp")
+    request.headers.set("X-Nonce", s"$nonce $clientName $timestamp")
   }
 }

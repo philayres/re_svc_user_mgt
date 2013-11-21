@@ -10,7 +10,7 @@ scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked")
 
 //------------------------------------------------------------------------------
 
-libraryDependencies += "com.twitter" %% "finagle-http" % "6.7.4"
+libraryDependencies += "com.twitter" %% "finagle-http" % "6.8.1"
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.2.5"
 
