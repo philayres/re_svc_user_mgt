@@ -13,13 +13,14 @@ import re_svc_user_mgt.service.{
 
 object Server extends App {
   val port = Config.config.getProperty("port").toInt
-  Config.log.info("Server starts on port %d", port)
+  val hostip = Config.config.getProperty("hostip")
+  Config.log.info("Server starts on hostip %s port %d", hostip, port)
 
   Nonce.schedulePeriodicallyDeleteExpiredNonces()
 
   ServerBuilder()
     .codec(RichHttp[Request](Http()))
-    .bindTo(new InetSocketAddress(port))
+    .bindTo(new InetSocketAddress(hostip, port))
     .name(Config.LOG_NODE)
     .build(
       FilterException andThen FilterReadParamsFromContentBody andThen

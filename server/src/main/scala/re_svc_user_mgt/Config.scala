@@ -21,7 +21,7 @@ object Config {
   private def configLog(): Logger = {
     val level       = Level.DEBUG
     val fileHandler = FileHandler(
-      filename   = "log/re_svc_user_mgt.log",
+      filename   = "/var/log/re_services/re_svc_user_mgt.log",
       rollPolicy = Policy.Daily
     )
 

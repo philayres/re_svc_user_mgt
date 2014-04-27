@@ -1,5 +1,7 @@
 DROP SCHEMA IF EXISTS re_svc_user_mgt;
 CREATE SCHEMA IF NOT EXISTS re_svc_user_mgt DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_bin;
+create user re_usr_mgt_ids@localhost identified by 'ja789jh';
+grant all on re_svc_user_mgt.* to re_usr_mgt_ids@localhost;
 USE re_svc_user_mgt;
 
 /*
@@ -150,7 +152,7 @@ CREATE TABLE auth_accesses(
 /* Bootstrap data ------------------------------------------------------------*/
 
 INSERT INTO clients(created_at, name, type, shared_secret)
- VALUES (NOW(), 'opclient1', 999, 'test123!');
+ VALUES (NOW(), 'opclient1', 999, 'akjsdf67*&^GDDJHGUYu7289g62846b287iuotBE,79mdwqimpkju');
 
 INSERT INTO users(created_at, enabled)
  VALUES (NOW(), 1);
@@ -161,3 +163,4 @@ INSERT INTO credentials(created_at, user_id, username, auth_type, password, salt
 
 INSERT INTO admins(created_at, user_id)
  VALUES (NOW(), 1);
+
