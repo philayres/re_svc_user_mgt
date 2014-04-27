@@ -38,6 +38,7 @@ object ClientMachine {
     }
   }
 
+  /** @return Future(Some(error)) or Future(None) */
   def delete(
     requester: Requester,
     username: String, authType: Int, password: String,
