@@ -154,6 +154,10 @@ CREATE TABLE auth_accesses(
 INSERT INTO clients(created_at, name, type, shared_secret)
  VALUES (NOW(), 'opclient1', 999, 'akjsdf67*&^GDDJHGUYu7289g62846b287iuotBE,79mdwqimpkju');
 
+insert into clients (created_at, name, type, shared_secret) 
+  values (NOW(), '//re-keep-busy-svc/user-client', '2','c42c0a568b3bd5e7c3f959f24f14a499f74a87c9fb824423e026024cb3863196');
+
+
 INSERT INTO users(created_at, enabled)
  VALUES (NOW(), 1);
 
