@@ -3,7 +3,7 @@ package re_svc_user_mgt.model
 import java.sql.Connection
 import scala.util.{Try, Success, Failure}
 import org.apache.commons.codec.digest.DigestUtils
-
+import org.jboss.netty.handler.codec.http.{QueryStringDecoder, HttpMethod}
 object Credential {
   /** @return Left(error) or Right((credentialId, userId)) */
   def exists(username: String, authType: Int): Either[String, (Int, Int)] = {
@@ -76,10 +76,12 @@ object Credential {
 
   def delete(username: String, authType: Int): Boolean = {
     DB.withConnection { con =>
+      
+      
       val ps = con.prepareStatement("DELETE FROM credentials WHERE username = ? AND auth_type = ?")
-      ps.setString(1, username)
+      ps.setString(1, QueryStringDecoder.decodeComponent(username))
       ps.setInt   (2, authType)
-
+            
       val deletedRows = ps.executeUpdate()
       val ret         = deletedRows > 0
       ps.close()
